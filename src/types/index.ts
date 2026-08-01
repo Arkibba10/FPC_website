@@ -9,6 +9,8 @@ export interface Member {
   instagram?: string;
   photo: string;
   order: number;
+  quote?: string;
+  bio?: string;
 }
 
 export interface Event {

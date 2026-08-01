@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useClub } from '../context/useClub';
-import { Film, Lock, Menu, X, Shield } from 'lucide-react';
+import { Menu, X, Shield } from 'lucide-react';
 
 interface HeaderProps {
   onAdminClick: () => void;
@@ -11,6 +11,21 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onAdminClick, isAdminView, onHomeClick }) => {
   const { user } = useClub();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const clickTimesRef = useRef<number[]>([]);
+
+  // Hidden gesture: 5 rapid clicks on the logo opens the admin panel.
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const now = Date.now();
+    clickTimesRef.current = clickTimesRef.current.filter((t) => now - t < 1500);
+    clickTimesRef.current.push(now);
+    if (clickTimesRef.current.length >= 5) {
+      clickTimesRef.current = [];
+      onAdminClick();
+      return;
+    }
+    onHomeClick();
+  };
 
   const handleNavClick = (sectionId: string) => {
     setMobileMenuOpen(false);
@@ -30,12 +45,17 @@ export const Header: React.FC<HeaderProps> = ({ onAdminClick, isAdminView, onHom
     <header className="fixed top-0 left-0 right-0 z-40 bg-charcoal-dark/90 backdrop-blur-md border-b border-white/5 py-4 shadow-lg transition-all duration-500">
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Brand Logo */}
-        <div 
-          onClick={onHomeClick}
+        <div
+          onClick={handleLogoClick}
           className="flex items-center gap-3 cursor-pointer group select-none"
+          title="FPC CSE-UAP"
         >
-          <div className="p-2.5 rounded-xl bg-burgundy/10 border border-gold/20 text-gold group-hover:bg-burgundy group-hover:scale-105 transition-all duration-300">
-            <Film size={18} />
+          <div className="p-1 rounded-xl bg-white/5 border border-white/10 shadow-lg">
+            <img
+              src="/images/FPC_Logo.png"
+              alt="FPC CSE-UAP Logo"
+              className="h-9 md:h-10 w-auto object-contain"
+            />
           </div>
           <div>
             <h1 className="font-playfair font-bold text-white text-base md:text-lg leading-tight group-hover:text-gold transition-colors">
@@ -59,26 +79,14 @@ export const Header: React.FC<HeaderProps> = ({ onAdminClick, isAdminView, onHom
           </nav>
         )}
 
-        {/* Actions / Admin link */}
+        {/* Actions */}
         <div className="flex items-center gap-3">
-          {user && (
+          {isAdminView && user && (
             <div className="hidden md:flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1 text-[10px] font-mono text-gold">
               <Shield size={10} />
               <span className="uppercase">{user.role}</span>
             </div>
           )}
-
-          <button
-            onClick={onAdminClick}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest font-bold border transition-all duration-300 cursor-pointer ${
-              isAdminView
-                ? 'bg-white/5 border-white/10 text-white hover:bg-white/10'
-                : 'bg-burgundy text-gold border-gold/30 hover:bg-burgundy-light hover:scale-105'
-            }`}
-          >
-            <Lock size={12} />
-            <span>{isAdminView ? 'View Exhibition' : 'Admin Portal'}</span>
-          </button>
 
           {/* Mobile Menu Button */}
           {!isAdminView && (

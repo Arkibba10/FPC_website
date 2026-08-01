@@ -199,7 +199,7 @@ const CameraUI: React.FC = () => (
     <div className="absolute top-2/3 left-0 right-0 h-px bg-[#151313]/10 lg:bg-white/[0.06]" />
 
     <div className="absolute inset-x-0 top-0 h-[10%] flex items-start justify-between px-[1.6%] pt-[0.9%] text-[#151313] lg:text-white lg:[text-shadow:0_1px_2px_rgba(0,0,0,0.6)] max-lg:landscape:top-auto max-lg:landscape:bottom-0 max-lg:landscape:h-[8%] max-lg:landscape:items-center max-lg:landscape:pt-0 max-lg:landscape:pb-[1%] lg:top-auto lg:bottom-0 lg:h-[8%] lg:items-center lg:pt-0 lg:pb-[1%] lg:pr-[13%]">
-      <div className="flex items-center gap-[2cqw] max-lg:landscape:gap-[2.4cqh] max-lg:landscape:flex-1 max-lg:landscape:justify-center lg:gap-[1.2vw] lg:flex-1 lg:justify-center text-[2.8cqw] max-lg:landscape:text-[2.4cqh] lg:text-[0.7vw] tracking-[0.18em] uppercase">
+      <div className="flex items-center gap-[2.8cqw] max-lg:landscape:gap-[3.2cqh] max-lg:landscape:flex-1 max-lg:landscape:justify-center lg:gap-[1.2vw] lg:flex-1 lg:justify-center text-[3.8cqw] max-lg:landscape:text-[3.2cqh] lg:text-[0.7vw] tracking-[0.18em] uppercase">
         <span className="font-bold text-[#151313] lg:text-white/90">Photo</span>
         <span className="text-[#151313]/45 lg:text-white/45">Video</span>
         <span className="hidden lg:inline text-white/45">Slo-Mo</span>
@@ -213,18 +213,18 @@ const CameraUI: React.FC = () => (
       </div>
     </div>
 
-    <div className="absolute left-[0.7%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-[1.6cqw] max-lg:landscape:gap-[1.5cqh] lg:gap-[0.6vw] text-[2.4cqw] max-lg:landscape:text-[2cqh] lg:text-[0.62vw] uppercase text-[#151313]/55 lg:text-white/50">
+    <div className="absolute left-[0.7%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-[2.2cqw] max-lg:landscape:gap-[2cqh] lg:gap-[0.6vw] text-[3.2cqw] max-lg:landscape:text-[2.7cqh] lg:text-[0.62vw] uppercase text-[#151313]/55 lg:text-white/50">
       <span>0.5x</span>
       <span className="font-bold text-[#151313] lg:text-white/90">1x</span>
       <span>2x</span>
       <span>5x</span>
     </div>
 
-    <div className="absolute left-[45%] top-[13%] w-[9cqw] h-[9cqw] max-lg:landscape:top-[16%] max-lg:landscape:w-[6.8cqh] max-lg:landscape:h-[6.8cqh] lg:top-[25%] lg:w-[6vw] lg:h-[6vw]">
-      <span className="absolute top-0 left-0 w-[2cqw] h-[2cqw] border-t-[0.35cqw] border-l-[0.35cqw] max-lg:landscape:w-[1.2cqh] max-lg:landscape:h-[1.2cqh] max-lg:landscape:border-t-[0.22cqh] max-lg:landscape:border-l-[0.22cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-tl-[0.3vw]" />
-      <span className="absolute top-0 right-0 w-[2cqw] h-[2cqw] border-t-[0.35cqw] border-r-[0.35cqw] max-lg:landscape:w-[1.2cqh] max-lg:landscape:h-[1.2cqh] max-lg:landscape:border-t-[0.22cqh] max-lg:landscape:border-r-[0.22cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-tr-[0.3vw]" />
-      <span className="absolute bottom-0 left-0 w-[2cqw] h-[2cqw] border-b-[0.35cqw] border-l-[0.35cqw] max-lg:landscape:w-[1.2cqh] max-lg:landscape:h-[1.2cqh] max-lg:landscape:border-b-[0.22cqh] max-lg:landscape:border-l-[0.22cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-bl-[0.3vw]" />
-      <span className="absolute bottom-0 right-0 w-[2cqw] h-[2cqw] border-b-[0.35cqw] border-r-[0.35cqw] max-lg:landscape:w-[1.2cqh] max-lg:landscape:h-[1.2cqh] max-lg:landscape:border-b-[0.22cqh] max-lg:landscape:border-r-[0.22cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-br-[0.3vw]" />
+    <div className="absolute left-[45%] top-[13%] w-[12cqw] h-[12cqw] max-lg:landscape:top-[16%] max-lg:landscape:w-[8.8cqh] max-lg:landscape:h-[8.8cqh] lg:top-[25%] lg:w-[6vw] lg:h-[6vw]">
+      <span className="absolute top-0 left-0 w-[2.7cqw] h-[2.7cqw] border-t-[0.5cqw] border-l-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-t-[0.3cqh] max-lg:landscape:border-l-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-tl-[0.3vw]" />
+      <span className="absolute top-0 right-0 w-[2.7cqw] h-[2.7cqw] border-t-[0.5cqw] border-r-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-t-[0.3cqh] max-lg:landscape:border-r-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-tr-[0.3vw]" />
+      <span className="absolute bottom-0 left-0 w-[2.7cqw] h-[2.7cqw] border-b-[0.5cqw] border-l-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-b-[0.3cqh] max-lg:landscape:border-l-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-bl-[0.3vw]" />
+      <span className="absolute bottom-0 right-0 w-[2.7cqw] h-[2.7cqw] border-b-[0.5cqw] border-r-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-b-[0.3cqh] max-lg:landscape:border-r-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-br-[0.3vw]" />
       <span
         className="absolute -bottom-[1.7vw] left-[0.3vw] text-[0.58vw] hidden lg:block lg:[text-shadow:0_1px_2px_rgba(0,0,0,0.6)]"
       >
@@ -233,23 +233,23 @@ const CameraUI: React.FC = () => (
     </div>
 
     <div className="absolute inset-x-0 bottom-0 h-[15%] flex items-center justify-between px-[2.5%] text-[#151313] lg:text-white max-lg:landscape:inset-x-auto max-lg:landscape:top-0 max-lg:landscape:right-0 max-lg:landscape:bottom-0 max-lg:landscape:left-auto max-lg:landscape:w-[14%] max-lg:landscape:h-auto max-lg:landscape:flex-col max-lg:landscape:items-center max-lg:landscape:justify-between max-lg:landscape:px-0 max-lg:landscape:py-[2.5%] lg:inset-x-auto lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:w-[12%] lg:h-auto lg:flex-col lg:items-center lg:justify-between lg:px-0 lg:py-[2.5%]">
-      <div className="relative w-[8cqw] max-lg:landscape:w-[8cqh] lg:w-[52%] aspect-[4/3] rounded-[0.5vw] overflow-hidden border border-[#151313]/30 lg:border-white/30 shadow-md">
+      <div className="relative w-[11cqw] max-lg:landscape:w-[10.5cqh] lg:w-[52%] aspect-[4/3] rounded-[0.5vw] overflow-hidden border border-[#151313]/30 lg:border-white/30 shadow-md">
         <img src="/images/gallery1.jpg" className="w-full h-full object-cover" />
-        <span className="absolute bottom-0 inset-x-0 bg-[#151313]/10 lg:bg-black/40 text-[#151313]/80 lg:text-white text-[0.9cqw] max-lg:landscape:text-[0.85cqh] lg:text-[0.45vw] tracking-widest text-center py-[0.12vw]">PHOTO</span>
+        <span className="absolute bottom-0 inset-x-0 bg-[#151313]/10 lg:bg-black/40 text-[#151313]/80 lg:text-white text-[1.2cqw] max-lg:landscape:text-[1.1cqh] lg:text-[0.45vw] tracking-widest text-center py-[0.12vw]">PHOTO</span>
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-[1cqw] max-lg:landscape:gap-[0.9cqh] max-lg:landscape:static max-lg:landscape:left-auto max-lg:landscape:translate-x-0 lg:gap-[0.4vw] lg:static lg:left-auto lg:translate-x-0">
-        <div className="relative w-[12cqw] h-[12cqw] max-lg:landscape:w-[10cqh] max-lg:landscape:h-[10cqh] lg:w-[4.8vw] lg:h-[4.8vw] rounded-full border-[0.4cqw] max-lg:landscape:border-[0.26cqh] lg:border-[0.26vw] border-[#151313]/70 lg:border-white/70 flex items-center justify-center shadow-[0_0.5vw_1vw_rgba(0,0,0,0.35)]">
-          <div className="w-[8cqw] h-[8cqw] max-lg:landscape:w-[6.8cqh] max-lg:landscape:h-[6.8cqh] lg:w-[3.1vw] lg:h-[3.1vw] rounded-full bg-white" />
+      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-[1.4cqw] max-lg:landscape:gap-[1.2cqh] max-lg:landscape:static max-lg:landscape:left-auto max-lg:landscape:translate-x-0 lg:gap-[0.4vw] lg:static lg:left-auto lg:translate-x-0">
+        <div className="relative w-[16cqw] h-[16cqw] max-lg:landscape:w-[13cqh] max-lg:landscape:h-[13cqh] lg:w-[4.8vw] lg:h-[4.8vw] rounded-full border-[0.55cqw] max-lg:landscape:border-[0.34cqh] lg:border-[0.26vw] border-[#151313]/70 lg:border-white/70 flex items-center justify-center shadow-[0_0.5vw_1vw_rgba(0,0,0,0.35)]">
+          <div className="w-[10.6cqw] h-[10.6cqw] max-lg:landscape:w-[8.8cqh] max-lg:landscape:h-[8.8cqh] lg:w-[3.1vw] lg:h-[3.1vw] rounded-full bg-white" />
         </div>
-        <span className="text-[1.3cqw] max-lg:landscape:text-[1cqh] lg:text-[0.45vw] tracking-[0.3em] uppercase text-[#151313]/60 lg:text-white/60">Photo</span>
+        <span className="text-[1.8cqw] max-lg:landscape:text-[1.3cqh] lg:text-[0.45vw] tracking-[0.3em] uppercase text-[#151313]/60 lg:text-white/60">Photo</span>
       </div>
 
-      <div className="flex items-center gap-[2.6cqw] max-lg:landscape:gap-[2.4cqh] lg:gap-[1.1vw]">
-        <Flashlight size={12} className="w-[2.8cqw] h-[2.8cqw] max-lg:landscape:w-[2.6cqh] max-lg:landscape:h-[2.6cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
-        <Timer size={12} className="w-[2.8cqw] h-[2.8cqw] max-lg:landscape:w-[2.6cqh] max-lg:landscape:h-[2.6cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
-        <span className="w-[2.6cqw] h-[1.9cqw] max-lg:landscape:w-[2.4cqh] max-lg:landscape:h-[1.8cqh] lg:w-[0.85vw] lg:h-[0.62vw] rounded-[0.25cqw] max-lg:landscape:rounded-[0.18cqh] lg:rounded-[0.15vw] border-[0.25cqw] max-lg:landscape:border-[0.22cqh] lg:border-[0.16vw] border-current opacity-70" />
-        <FlipHorizontal2 size={12} className="w-[2.8cqw] h-[2.8cqw] max-lg:landscape:w-[2.6cqh] max-lg:landscape:h-[2.6cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
+      <div className="flex items-center gap-[3.5cqw] max-lg:landscape:gap-[3.2cqh] lg:gap-[1.1vw]">
+        <Flashlight size={12} className="w-[3.7cqw] h-[3.7cqw] max-lg:landscape:w-[3.4cqh] max-lg:landscape:h-[3.4cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
+        <Timer size={12} className="w-[3.7cqw] h-[3.7cqw] max-lg:landscape:w-[3.4cqh] max-lg:landscape:h-[3.4cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
+        <span className="w-[3.5cqw] h-[2.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[2.4cqh] lg:w-[0.85vw] lg:h-[0.62vw] rounded-[0.33cqw] max-lg:landscape:rounded-[0.24cqh] lg:rounded-[0.15vw] border-[0.33cqw] max-lg:landscape:border-[0.3cqh] lg:border-[0.16vw] border-current opacity-70" />
+        <FlipHorizontal2 size={12} className="w-[3.7cqw] h-[3.7cqw] max-lg:landscape:w-[3.4cqh] max-lg:landscape:h-[3.4cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
       </div>
     </div>
   </div>

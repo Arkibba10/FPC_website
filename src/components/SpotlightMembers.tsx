@@ -1,204 +1,222 @@
 import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Facebook, Linkedin, Instagram, Mail } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Facebook, Linkedin, Instagram, Mail, Quote } from 'lucide-react';
 import { Member } from '../types';
 
 interface SpotlightMembersProps {
   members: Member[];
 }
 
-export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: false, amount: 0.15 });
+const ROLES = [
+  'president',
+  'vice president',
+  'general secretary',
+  'joint secretary',
+  'treasurer',
+  'secretary',
+  'event coordinator',
+  'creative head',
+  'media head',
+  'web master',
+  'executive member',
+  'member',
+];
 
-  // Render a single member card as a LONG RECTANGLE with the picture taking most of the space
-  const renderCard = (member: Member) => {
-    return (
-      <div
-        key={member.id}
-        className="relative flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-charcoal-dark/80 text-white transition-all duration-500 w-full aspect-[10/16] max-w-[280px] mx-auto group hover:border-gold/40 hover:shadow-[0_0_30px_rgba(200,169,106,0.15)]"
-      >
-        {/* Full-bleed/Large Photo taking 78% of the card */}
-        <div className="relative h-[78%] w-full overflow-hidden bg-black">
-          <img
-            src={member.photo}
-            alt={member.name}
-            className="w-full h-full object-cover transition-all duration-1000 ease-out group-hover:scale-105 grayscale-[15%] group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
-            loading="lazy"
-          />
-          {/* Subtle vignette inside photo */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
-          
-          <div className="absolute top-4 right-4 bg-burgundy/80 text-gold border border-gold/30 text-[8px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            CSE-UAP
-          </div>
-        </div>
+const roleRank = (position: string) => {
+  const s = position.toLowerCase();
+  const idx = ROLES.findIndex((r) => s.includes(r));
+  return idx === -1 ? ROLES.length + 100 : idx;
+};
 
-        {/* Editorial Text Area at the bottom (Latter 22%) */}
-        <div className="h-[22%] p-4 flex flex-col justify-center bg-charcoal-dark/95 border-t border-white/5 relative">
-          <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent"></div>
+const MemberCard: React.FC<{ member: Member; index: number }> = ({ member, index }) => (
+  <div className="flex flex-col md:flex-row items-center md:items-center gap-10 md:gap-14 lg:gap-16 flex-shrink-0">
+    {/* Large rounded portrait — left */}
+    <div className="relative group w-auto h-[44vh] md:h-[60vh] lg:h-[64vh] aspect-[3/4] flex-shrink-0">
+      {/* Soft spotlight behind portrait */}
+      <div className="absolute -inset-3 bg-gradient-to-tr from-burgundy/10 to-gold/20 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-700 -z-10" />
 
-          <h3 className="font-playfair text-base md:text-lg font-bold truncate text-gold group-hover:text-white transition-colors duration-300">
-            {member.name}
-          </h3>
-          
-          <div className="flex items-center justify-between gap-2 mt-1">
-            <p className="text-[10px] font-mono uppercase tracking-wider text-white/80 truncate">
-              {member.position}
-            </p>
-            <p className="text-[10px] font-mono text-gold/60">
-              {member.batch}
-            </p>
-          </div>
+      {/* Gold frame accent */}
+      <div className="absolute inset-0 border border-gold/30 rounded-3xl translate-x-3 translate-y-3 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform duration-500 -z-10" />
 
-          {/* Hover Overlay Social Links */}
-          <div className="absolute inset-0 bg-charcoal/95 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 px-4">
-            {member.facebook && (
-              <a
-                href={member.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full bg-white/5 text-white hover:bg-burgundy hover:text-gold hover:scale-110 transition-all"
-              >
-                <Facebook size={14} />
-              </a>
-            )}
-            {member.linkedin && (
-              <a
-                href={member.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full bg-white/5 text-white hover:bg-burgundy hover:text-gold hover:scale-110 transition-all"
-              >
-                <Linkedin size={14} />
-              </a>
-            )}
-            {member.instagram && (
-              <a
-                href={member.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full bg-white/5 text-white hover:bg-burgundy hover:text-gold hover:scale-110 transition-all"
-              >
-                <Instagram size={14} />
-              </a>
-            )}
-            {member.email && (
-              <a
-                href={`mailto:${member.email}`}
-                className="p-2 rounded-full bg-white/5 text-white hover:bg-burgundy hover:text-gold hover:scale-110 transition-all"
-              >
-                <Mail size={14} />
-              </a>
-            )}
-          </div>
-        </div>
+      {/* Portrait container */}
+      <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-charcoal/5 bg-charcoal">
+        <img
+          src={member.photo}
+          alt={member.name}
+          className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
+          loading="lazy"
+        />
+        {/* Subtle bottom vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-transparent to-transparent opacity-30" />
       </div>
-    );
-  };
 
-  return (
-    <div
-      ref={sectionRef}
-      className="relative min-h-screen bg-charcoal py-24 px-4 md:px-12 flex flex-col justify-center overflow-hidden"
-    >
-      {/* Background soft ambient spotlight */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-burgundy/5 rounded-full blur-[150px] pointer-events-none"></div>
-
-      {/* Editorial Header */}
-      <div className="max-w-6xl mx-auto w-full mb-16 z-20">
-        <span className="text-gold font-mono uppercase tracking-widest text-xs block mb-3">
-          Behind the Lenses
+      {/* Hierarchy / Rank Badge */}
+      <div className="absolute top-4 left-4 z-20 w-14 h-14 rounded-2xl bg-burgundy text-gold border border-gold/40 shadow-2xl flex flex-col items-center justify-center">
+        <span className="font-mono text-base font-bold leading-none">
+          {String(index + 1).padStart(2, '0')}
         </span>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white leading-tight">
-          Executive <span className="italic text-gold font-normal">Members</span>
-        </h2>
-        <div className="w-20 h-[1px] bg-gold/40 mt-6"></div>
+        <span className="text-[7px] font-mono uppercase tracking-widest mt-1">
+          {index === 0 ? 'Lead' : 'Exec'}
+        </span>
       </div>
 
-      {/* Realistic Professional Video Camera sliding in from left */}
-      <motion.div
-        initial={{ x: -200, opacity: 0, rotate: -10 }}
-        animate={isInView ? { x: 0, opacity: 1, rotate: 0 } : { x: -200, opacity: 0 }}
-        transition={{ type: 'spring', damping: 15, stiffness: 60 }}
-        className="absolute left-4 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center z-30 pointer-events-none"
-      >
-        {/* Cinema Video Camera SVG */}
-        <svg
-          width="180"
-          height="160"
-          viewBox="0 0 180 160"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
-        >
-          {/* Top Handle */}
-          <rect x="35" y="15" width="75" height="10" rx="3" fill="#3a3a3a" />
-          <path d="M50 25V35H95V25" stroke="#2a2a2a" strokeWidth="4" />
-          
-          {/* Dual Film Reels on top */}
-          <circle cx="60" cy="15" r="15" fill="#1e1e1e" stroke="#c8a96a" strokeWidth="1.5" />
-          <circle cx="60" cy="15" r="5" fill="#3a3a3a" />
-          <circle cx="95" cy="15" r="15" fill="#1e1e1e" stroke="#c8a96a" strokeWidth="1.5" />
-          <circle cx="95" cy="15" r="5" fill="#3a3a3a" />
+      {/* Batch chip */}
+      <div className="absolute bottom-4 right-4 z-20 bg-white/85 text-charcoal/70 text-[10px] font-mono px-3 py-1 rounded-full border border-charcoal/10 uppercase tracking-wider">
+        {member.batch}
+      </div>
+    </div>
 
-          {/* Main Camera Body */}
-          <rect x="30" y="35" width="90" height="70" rx="6" fill="#1c1c1c" stroke="#2d2d2d" strokeWidth="2" />
-          
-          {/* Side monitor/controls */}
-          <rect x="40" y="45" width="50" height="35" rx="3" fill="#111" />
-          <rect x="45" y="50" width="40" height="25" rx="1" fill="#6e1e2a" opacity="0.3" />
-          <circle cx="102" cy="52" r="4" fill="#6e1e2a" className="animate-pulse" /> {/* Recording LED */}
-          <rect x="105" y="65" width="8" height="25" rx="2" fill="#3a3a3a" />
+    {/* Editorial details — right of the portrait, outside the image box */}
+    <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left min-w-[240px] max-w-[480px] flex-1">
+      {/* Small uppercase role label */}
+      <span className="text-burgundy font-mono uppercase tracking-[0.25em] text-[11px] block mb-3">
+        Executive {String(index + 1).padStart(2, '0')}
+      </span>
 
-          {/* Lens Mount & Large Lens */}
-          <path d="M120 50 L140 45 L140 90 L120 85 Z" fill="#2d2d2d" stroke="#3a3a3a" />
-          <rect x="140" y="40" width="25" height="55" rx="4" fill="#111" stroke="#c8a96a" strokeWidth="1" />
-          <circle cx="152" cy="67" r="18" fill="#1a1a1a" />
-          {/* Lens Glass */}
-          <circle cx="152" cy="67" r="12" fill="url(#lensGrad)" />
+      {/* Elegant large serif name */}
+      <h3 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-charcoal leading-[1.05]">
+        {member.name}
+      </h3>
 
-          {/* Matte Box / Barn doors */}
-          <path d="M165 48 L178 35 M165 87 L178 100" stroke="#3a3a3a" strokeWidth="3" />
-          <rect x="163" y="45" width="4" height="44" fill="#3a3a3a" />
+      {/* Uppercase position / title */}
+      <p className="text-xs md:text-sm font-mono text-burgundy uppercase tracking-widest mt-3">
+        {member.position}
+      </p>
 
-          <defs>
-            <radialGradient id="lensGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#c8a96a" stopOpacity="0.8" />
-              <stop offset="70%" stopColor="#6e1e2a" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#111" />
-            </radialGradient>
-          </defs>
-        </svg>
+      {/* Short burgundy divider */}
+      <div className="w-16 h-[1px] bg-burgundy/40 my-6"></div>
 
-        {/* Camera Stand/Tripod Head */}
-        <div className="w-12 h-8 bg-charcoal-dark border-t-2 border-white/10 rounded-b-lg"></div>
-        <div className="w-1 h-20 bg-gradient-to-b from-white/20 to-transparent"></div>
+      {/* Subtle quote / message card */}
+      {member.quote && (
+        <div className="relative bg-white/40 border border-charcoal/5 p-5 rounded-2xl shadow-sm backdrop-blur-sm w-full">
+          <Quote className="absolute -top-3 -left-3 text-gold/30 w-8 h-8 fill-gold/10" />
+          <p className="font-playfair italic text-lg text-charcoal/90 leading-relaxed pl-4">
+            "{member.quote}"
+          </p>
+        </div>
+      )}
 
-        {/* Decorative ambient spotlight beam projected from camera lens */}
-        <svg className="absolute top-[67px] left-[152px] w-[1200px] h-[600px] pointer-events-none origin-left overflow-visible z-10 opacity-15">
-          <defs>
-            <linearGradient id="beamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
-              <stop offset="0%" stopColor="#C8A96A" stopOpacity="0.3" />
-              <stop offset="40%" stopColor="#C8A96A" stopOpacity="0.1" />
-              <stop offset="100%" stopColor="#C8A96A" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <polygon
-            points="0,0 800,-250 800,250"
-            fill="url(#beamGrad)"
-          />
-        </svg>
-      </motion.div>
+      {/* Short bio */}
+      {member.bio && (
+        <p className="text-sm text-charcoal/70 leading-relaxed mt-5 font-sans w-full">
+          {member.bio}
+        </p>
+      )}
 
-      {/* Main Grid Area (Fully illuminated and visible without spotlight mask) */}
-      <div
-        className="relative max-w-6xl mx-auto w-full z-20"
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
-          {members.map(member => renderCard(member))}
+      {/* Contact & social information — bottom */}
+      <div className="mt-7 pt-6 border-t border-charcoal/10 w-full flex flex-wrap items-center gap-x-6 gap-y-4 justify-center md:justify-start">
+        {member.email && (
+          <a
+            href={`mailto:${member.email}`}
+            className="flex items-center gap-2 text-xs font-mono text-charcoal/60 hover:text-burgundy transition-colors duration-300"
+          >
+            <Mail size={14} className="text-burgundy" />
+            <span className="break-all">{member.email}</span>
+          </a>
+        )}
+        <div className="flex items-center gap-2">
+          {member.facebook && (
+            <a
+              href={member.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name} on Facebook`}
+              className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
+            >
+              <Facebook size={14} />
+            </a>
+          )}
+          {member.linkedin && (
+            <a
+              href={member.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name} on LinkedIn`}
+              className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
+            >
+              <Linkedin size={14} />
+            </a>
+          )}
+          {member.instagram && (
+            <a
+              href={member.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name} on Instagram`}
+              className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
+            >
+              <Instagram size={14} />
+            </a>
+          )}
         </div>
       </div>
     </div>
+  </div>
+);
+
+export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) => {
+  const targetRef = useRef<HTMLElement>(null);
+
+  const sorted = [...members].sort(
+    (a, b) => roleRank(a.position) - roleRank(b.position) || a.order - b.order
+  );
+  const total = sorted.length;
+
+  // Track scroll progress of the pinned container
+  const { scrollYProgress } = useScroll({ target: targetRef });
+
+  // Map scroll progress to horizontal translation (page stays pinned)
+  const x = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ['0%', total > 1 ? `-${((total - 1) / total) * 100}%` : '0%']
+  );
+
+  return (
+    <section
+      ref={targetRef}
+      className="relative bg-beige"
+      style={{ height: `${(total + 1) * 60}vh` }}
+    >
+      {/* Sticky container that stays in viewport */}
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden py-12">
+        {/* Background soft ambient glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gold/5 rounded-full blur-[150px] pointer-events-none" />
+
+        {/* Section Header */}
+        <div className="relative max-w-6xl mx-auto w-full px-6 md:px-12 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 z-20">
+          <div>
+            <span className="text-burgundy font-mono uppercase tracking-widest text-xs block mb-3">
+              Behind the Lenses
+            </span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-charcoal leading-tight">
+              Executive <span className="italic text-burgundy font-normal">Members</span>
+            </h2>
+          </div>
+          <div className="flex flex-col items-start md:items-end">
+            <p className="text-sm font-mono text-charcoal/50 uppercase tracking-widest">
+              ✦ Scroll down to traverse
+            </p>
+            <div className="w-24 h-[1px] bg-burgundy/30 mt-2"></div>
+          </div>
+        </div>
+
+        {/* Horizontal moving members track */}
+        <div className="relative flex-1 flex items-center z-20">
+          <motion.div style={{ x }} className="flex items-center gap-12 px-6 md:px-12 w-max">
+            {sorted.map((member, i) => (
+              <MemberCard key={member.id} member={member} index={i} />
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Bottom Progress Bar */}
+        <div className="relative max-w-6xl mx-auto w-full px-6 md:px-12 mt-6 z-20">
+          <div className="w-full h-[2px] bg-charcoal/10 rounded-full overflow-hidden">
+            <motion.div className="h-full bg-burgundy origin-left" style={{ scaleX: scrollYProgress }} />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };

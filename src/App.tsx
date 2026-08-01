@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ClubProvider } from './context/ClubContext';
 import { useClub } from './context/useClub';
 import { FilmGrain } from './components/FilmGrain';
+import FloatingDust from './components/FloatingDust';
 import { FilmstripLoader } from './components/FilmstripLoader';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
@@ -18,8 +20,9 @@ import { AdminDashboard } from './components/AdminDashboard';
 
 // Animated Elements
 import { Polaroid } from './components/animated/Polaroid';
-import { FilmReel } from './components/animated/FilmReel';
 import { Clapperboard } from './components/animated/Clapperboard';
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 const AppContent: React.FC = () => {
   const { members, events, gallery, alumni } = useClub();
@@ -37,6 +40,9 @@ const AppContent: React.FC = () => {
           {/* Cinematic Film Grain Overlay */}
           <FilmGrain />
 
+          {/* Site-wide ambient dust floating up & dissolving */}
+          <FloatingDust />
+
           {/* Editorial Navigation Header */}
           <Header
             isAdminView={isAdminView}
@@ -45,16 +51,30 @@ const AppContent: React.FC = () => {
           />
 
           {/* Main View Router */}
-          {isAdminView ? (
-            <div className="pt-20">
-              <AdminDashboard />
-            </div>
-          ) : (
-            <div className="transition-all duration-700">
-              {/* Section 1: Hero — cinematic "looking through a camera" landing */}
-              <div id="hero" className="relative">
-                <HeroSection />
-              </div>
+          <AnimatePresence mode="wait">
+            {isAdminView ? (
+              <motion.div
+                key="admin"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.45, ease: EASE }}
+                className="pt-20"
+              >
+                <AdminDashboard />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="main"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.45, ease: EASE }}
+              >
+                {/* Section 1: Hero — cinematic "looking through a camera" landing */}
+                <div id="hero" className="relative">
+                  <HeroSection />
+                </div>
 
               {/* Section 2: Fullscreen Motto Manifesto */}
               <div id="manifesto">
@@ -77,13 +97,8 @@ const AppContent: React.FC = () => {
               </div>
 
               {/* Section 5: Members Spotlight Reveal */}
-              <div id="members" className="relative bg-charcoal">
+              <div id="members" className="relative bg-beige">
                 <SpotlightMembers members={members} />
-                
-                {/* Spin Reel decorative in background near professional video camera */}
-                <div className="absolute left-[8%] bottom-16 opacity-15 z-10 pointer-events-none hidden xl:block">
-                  <FilmReel size={130} speed={30} />
-                </div>
               </div>
 
               {/* Section 6: Prestigious Convener Showcase */}
@@ -118,8 +133,9 @@ const AppContent: React.FC = () => {
 
               {/* Section 10: Premium Footer */}
               <Footer />
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
 

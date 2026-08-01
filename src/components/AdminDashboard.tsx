@@ -32,7 +32,7 @@ export const AdminDashboard: React.FC = () => {
 
   // Form states
   const [memberForm, setMemberForm] = useState<Omit<Member, 'id' | 'order'>>({
-    name: '', position: '', batch: '', email: '', facebook: '', linkedin: '', instagram: '', photo: ''
+    name: '', position: '', batch: '', email: '', facebook: '', linkedin: '', instagram: '', photo: '', quote: '', bio: ''
   });
   const [eventForm, setEventForm] = useState<Omit<Event, 'id' | 'order'>>({
     title: '', date: '', description: '', coverImage: '', images: [], videoUrl: '', location: '', details: ''
@@ -79,7 +79,9 @@ export const AdminDashboard: React.FC = () => {
       facebook: member.facebook || '',
       linkedin: member.linkedin || '',
       instagram: member.instagram || '',
-      photo: member.photo
+      photo: member.photo,
+      quote: member.quote || '',
+      bio: member.bio || ''
     });
     setIsAddingNew(true);
   };
@@ -164,7 +166,7 @@ export const AdminDashboard: React.FC = () => {
     } else {
       addMember(memberForm);
     }
-    setMemberForm({ name: '', position: '', batch: '', email: '', facebook: '', linkedin: '', instagram: '', photo: '' });
+    setMemberForm({ name: '', position: '', batch: '', email: '', facebook: '', linkedin: '', instagram: '', photo: '', quote: '', bio: '' });
     setIsAddingNew(false);
   };
 
@@ -803,6 +805,26 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono text-white/50 uppercase tracking-wider mb-2">Short Quote / Message</label>
+                    <textarea
+                      rows={2}
+                      value={memberForm.quote}
+                      onChange={e => setMemberForm(prev => ({ ...prev, quote: e.target.value }))}
+                      placeholder="One-line quote shown in the editorial profile card"
+                      className="w-full bg-charcoal border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none resize-none"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-mono text-white/50 uppercase tracking-wider mb-2">Short Bio</label>
+                    <textarea
+                      rows={3}
+                      value={memberForm.bio}
+                      onChange={e => setMemberForm(prev => ({ ...prev, bio: e.target.value }))}
+                      placeholder="2-3 sentence biography shown below the quote"
+                      className="w-full bg-charcoal border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none resize-none"
+                    />
+                  </div>
                   <div className="md:col-span-2 flex justify-end gap-3">
                     <button
                       type="button"
@@ -1220,11 +1242,10 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="md:col-span-2 flex justify-end gap-3">
                     <button
                       type="button"
-                      onClick={() => setIsAddingNew(false)}
+                      onClick={closeForms}
                       className="px-4 py-2.5 rounded-xl border border-white/10 text-white hover:bg-white/5 font-mono text-xs uppercase"
                     >
                       Cancel

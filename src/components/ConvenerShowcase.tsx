@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useClub } from '../context/useClub';
 import { Mail, Phone, Quote } from 'lucide-react';
@@ -6,7 +6,15 @@ import { Mail, Phone, Quote } from 'lucide-react';
 export const ConvenerShowcase: React.FC = () => {
   const { convener } = useClub();
   const sectionRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+
+  useEffect(() => {
+    if (isInView && videoRef.current && !videoFailed) {
+      videoRef.current.play().catch(() => setVideoFailed(true));
+    }
+  }, [isInView, videoFailed]);
 
   return (
     <section
@@ -35,12 +43,26 @@ export const ConvenerShowcase: React.FC = () => {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-charcoal/5 bg-charcoal"
             >
-              <img
-                src={convener.photo}
-                alt={convener.name}
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                loading="lazy"
-              />
+              {videoFailed ? (
+                <img
+                  src={convener.photo}
+                  alt={convener.name}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  loading="lazy"
+                />
+              ) : (
+                <video
+                  ref={videoRef}
+                  src="/videos/convener.mov"
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  muted
+                  playsInline
+                  preload="auto"
+                  poster={convener.photo}
+                  onError={() => setVideoFailed(true)}
+                  onEnded={(e) => e.currentTarget.pause()}
+                />
+              )}
               {/* Vignette */}
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent opacity-40" />
             </motion.div>

@@ -11,6 +11,8 @@ export const defaultMembers: Member[] = [
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
     photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    quote: 'A frame is a sentence; leadership is the story we tell together.',
+    bio: 'Guiding the Faculty of Computing Club with vision and integrity, ensuring every initiative reflects our shared passion for creativity and technology.',
     order: 1
   },
   {
@@ -23,6 +25,8 @@ export const defaultMembers: Member[] = [
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
     photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400',
+    quote: 'Every angle holds a perspective worth honoring.',
+    bio: 'Supporting the president in steering club operations, bridging teams, and championing an inclusive, creative culture across the faculty.',
     order: 2
   },
   {
@@ -35,6 +39,8 @@ export const defaultMembers: Member[] = [
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
     photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    quote: 'Great memories are built on great organization.',
+    bio: 'Keeping the club\u2019s rhythm \u2014 records, correspondence, and coordination \u2014 so every member\u2019s voice is heard and every plan comes alive.',
     order: 3
   },
   {
@@ -47,6 +53,8 @@ export const defaultMembers: Member[] = [
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
     photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400',
+    quote: 'The best photographs come from carefully crafted moments.',
+    bio: 'Turning ideas into well-run events \u2014 from concept to closing frame \u2014 with a sharp eye for detail and seamless execution.',
     order: 4
   },
   {
@@ -59,6 +67,8 @@ export const defaultMembers: Member[] = [
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
     photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=400',
+    quote: 'Chasing light, framing truth.',
+    bio: 'Leading the photography wing \u2014 mentoring shooters, curating visual stories, and pushing the craft of the image forward.',
     order: 5
   },
   {
@@ -71,6 +81,8 @@ export const defaultMembers: Member[] = [
     linkedin: 'https://linkedin.com',
     instagram: 'https://instagram.com',
     photo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400',
+    quote: 'Motion tells the stories stillness cannot.',
+    bio: 'Directing the club\u2019s moving images \u2014 from documentaries to recaps \u2014 capturing the energy of campus life frame by frame.',
     order: 6
   }
 ];

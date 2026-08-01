@@ -17,6 +17,9 @@ public/*.zip
 public/*.tar.gz
 uploads
 
+# Local debug screenshots
+visuals
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

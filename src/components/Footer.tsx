@@ -30,22 +30,13 @@ export const Footer: React.FC = () => {
               onClick={handleScrollToTop} 
               className="flex items-center gap-4 cursor-pointer group w-max select-none"
             >
-              {/* Custom SVG Camera Outline matching the image */}
-              <div className="text-white group-hover:text-gold transition-colors duration-300">
-                <svg width="52" height="52" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Camera body outline */}
-                  <rect x="15" y="32" width="70" height="52" rx="12" stroke="currentColor" strokeWidth="4.5" />
-                  {/* Lens ring */}
-                  <circle cx="50" cy="58" r="18" stroke="currentColor" strokeWidth="4.5" />
-                  {/* Lens glass reflection */}
-                  <path d="M42 51 A 11 11 0 0 1 58 51" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  {/* Flash on top */}
-                  <path d="M35 32 L35 21 L65 21 L65 32" stroke="currentColor" strokeWidth="4.5" strokeLinejoin="round" />
-                  {/* Red indicator dot */}
-                  <circle cx="74" cy="44" r="3.5" fill="#E11D48" />
-                  {/* FPC text inside camera */}
-                  <text x="50" y="62" fill="currentColor" fontSize="10" fontFamily="sans-serif" textAnchor="middle" fontWeight="bold">FPC</text>
-                </svg>
+              {/* Club Logo */}
+              <div className="group-hover:scale-105 group-hover:drop-shadow-[0_0_12px_rgba(200,169,106,0.4)] transition-all duration-300">
+                <img
+                  src="/images/FPC_Logo.png"
+                  alt="FPC CSE-UAP Logo"
+                  className="h-14 w-auto object-contain"
+                />
               </div>
               
               {/* Brand Typography */}
@@ -181,9 +172,14 @@ export const Footer: React.FC = () => {
             <p>© 2026 Film &amp; Photography Club, CSE-UAP. All rights reserved.</p>
             <p>
               Design &amp; Development by{' '}
-              <span className="text-[#E11D48] font-bold hover:text-white transition-colors cursor-pointer">
-                Yeakin Iqra
-              </span>
+              <a
+                href="https://www.tinyurl.com/arkibba10"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#E11D48] font-bold hover:text-white transition-colors cursor-pointer"
+              >
+                Md Arkive
+              </a>
             </p>
           </div>
           
