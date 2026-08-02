@@ -1,5 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  animate,
+  motion,
+  MotionValue,
+  useInView,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
 import { Facebook, Linkedin, Instagram, Mail, Quote } from 'lucide-react';
 import { Member } from '../types';
 
@@ -17,6 +27,8 @@ const ROLES = [
   'event coordinator',
   'creative head',
   'media head',
+  'head of photography',
+  'head of videography',
   'web master',
   'executive member',
   'member',
@@ -28,211 +40,345 @@ const roleRank = (position: string) => {
   return idx === -1 ? ROLES.length + 100 : idx;
 };
 
-const MemberCard: React.FC<{ member: Member; index: number }> = ({ member, index }) => (
-  <div className="flex flex-col md:flex-row items-center md:items-center gap-10 md:gap-14 lg:gap-16 flex-shrink-0">
-    {/* Large rounded portrait — left */}
-    <div className="relative group w-auto h-[44vh] md:h-[60vh] lg:h-[64vh] aspect-[3/4] flex-shrink-0">
-      {/* Soft spotlight behind portrait */}
-      <div className="absolute -inset-3 bg-gradient-to-tr from-burgundy/10 to-gold/20 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-700 -z-10" />
+const CARD_WIDTH = 260;
+const CARD_HEIGHT = 520;
+const CARD_RADIUS = 36;
+const SLOT_SPACING = 80;
+const SLOT_ROTATION = 9;
+const FLOAT_MS = 7000;
+const FLOAT_AMPLITUDE = 6;
+const MAX_TILT = 8;
+const PERSPECTIVE = 1800;
+const HOVER_SCALE = 1.04;
+const HOVER_ROTATE_KEEP = 0.15;
+const CASCADE_Y = 16;
+const ROTATION_FULL = 0.85;
+const BACK_SCALE = 0.045;
+const FINAL_FADE = 0.35;
+const REVEAL_SCALE = 0.88;
+const PAGE_MARGIN = 36;
+const CAPTION_RESERVE = 150;
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-      {/* Gold frame accent */}
-      <div className="absolute inset-0 border border-gold/30 rounded-3xl translate-x-3 translate-y-3 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform duration-500 -z-10" />
+interface TierConfig {
+  half: number;
+  spacing: number;
+  rotation: number;
+  cardW: number;
+  cardH: number;
+  captionScale: number;
+  fadeStart: number;
+  fadeEnd: number;
+}
 
-      {/* Portrait container */}
-      <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-charcoal/5 bg-charcoal">
-        <img
-          src={member.photo}
-          alt={member.name}
-          className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Subtle bottom vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-transparent to-transparent opacity-30" />
-      </div>
+const TIERS: { name: 'mobile' | 'tablet' | 'desktop'; query: string; cfg: TierConfig }[] = [
+  { name: 'mobile', query: '(max-width: 639px)', cfg: { half: 1, spacing: 0.62, rotation: 0.55, cardW: 205, cardH: 400, captionScale: 0.8, fadeStart: 1.35, fadeEnd: 2.35 } },
+  { name: 'tablet', query: '(min-width: 640px) and (max-width: 1023px)', cfg: { half: 1.5, spacing: 0.85, rotation: 0.8, cardW: 240, cardH: 470, captionScale: 0.9, fadeStart: 1.5, fadeEnd: 2.5 } },
+  { name: 'desktop', query: '(min-width: 1024px)', cfg: { half: 2, spacing: 1, rotation: 1, cardW: CARD_WIDTH, cardH: CARD_HEIGHT, captionScale: 1, fadeStart: 2.5, fadeEnd: 4.2 } },
+];
 
-      {/* Hierarchy / Rank Badge */}
-      <div className="absolute top-4 left-4 z-20 w-14 h-14 rounded-2xl bg-burgundy text-gold border border-gold/40 shadow-2xl flex flex-col items-center justify-center">
-        <span className="font-mono text-base font-bold leading-none">
-          {String(index + 1).padStart(2, '0')}
-        </span>
-        <span className="text-[7px] font-mono uppercase tracking-widest mt-1">
-          {index === 0 ? 'Lead' : 'Exec'}
-        </span>
-      </div>
+const hierarchyPhase = (i: number): number => {
+  if (i === 0) return 0;
+  const slot = Math.ceil(i / 2);
+  return (i % 2 === 1 ? 1 : -1) * slot;
+};
 
-      {/* Batch chip */}
-      <div className="absolute bottom-4 right-4 z-20 bg-white/85 text-charcoal/70 text-[10px] font-mono px-3 py-1 rounded-full border border-charcoal/10 uppercase tracking-wider">
-        {member.batch}
-      </div>
-    </div>
+const cardOpacity = (r: number, half: number, fadeStart: number, fadeEnd: number, fadeAmount: number) => {
+  const d = Math.abs(r);
+  const base = 1 - Math.min(d, half) * 0.05;
+  if (d <= fadeStart) return base;
+  const t = (d - fadeStart) / Math.max(0.0001, fadeEnd - fadeStart);
+  const fade = Math.max(0, 1 - t);
+  return base * (1 + (fade - 1) * fadeAmount);
+};
 
-    {/* Editorial details — right of the portrait, outside the image box */}
-    <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left min-w-[240px] max-w-[480px] flex-1">
-      {/* Small uppercase role label */}
-      <span className="text-burgundy font-mono uppercase tracking-[0.25em] text-[11px] block mb-3">
-        Executive {String(index + 1).padStart(2, '0')}
-      </span>
+interface FanCardProps {
+  member: Member;
+  phase: number;
+  spread: MotionValue<number>;
+  reveal: MotionValue<number>;
+  cfg: TierConfig;
+  fadeStart: number;
+  fadeEnd: number;
+  reduced: boolean;
+  inView: boolean;
+}
 
-      {/* Elegant large serif name */}
-      <h3 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-charcoal leading-[1.05]">
-        {member.name}
-      </h3>
+const FanCard: React.FC<FanCardProps> = ({
+  member,
+  phase: phaseNum,
+  spread,
+  reveal,
+  cfg,
+  fadeStart,
+  fadeEnd,
+  reduced,
+  inView,
+}) => {
+  const hoverFactor = useMotionValue(0);
+  const phase = useMotionValue(phaseNum);
+  const depth = useTransform(phase, (p) => 100 - Math.min(Math.abs(p), cfg.half + 1) * 24);
+  const x = useTransform([phase, spread, reveal], (latest: number[]) => latest[0] * SLOT_SPACING * cfg.spacing * latest[1] * latest[2]);
+  const yOff = useTransform([phase, reveal], (latest: number[]) => -Math.abs(latest[0]) * CASCADE_Y * latest[1]);
+  const rotate = useTransform([phase, reveal, hoverFactor], (latest: number[]) => {
+    const [p, r, h] = latest;
+    return -p * SLOT_ROTATION * cfg.rotation * ROTATION_FULL * r * (1 - (1 - HOVER_ROTATE_KEEP) * h);
+  });
+  const scale = useTransform([phase, reveal, hoverFactor], (latest: number[]) => {
+    const [p, r, h] = latest;
+    return (1 - Math.min(Math.abs(p), cfg.half + 0.5) * BACK_SCALE) * (REVEAL_SCALE + (1 - REVEAL_SCALE) * r) * (1 + (HOVER_SCALE - 1) * h);
+  });
+  const opacity = useTransform([phase, reveal], (latest: number[]) =>
+    cardOpacity(latest[0], cfg.half, fadeStart, fadeEnd, FINAL_FADE) * latest[1]
+  );
+  const zIndex = useTransform(phase, (p) => Math.max(1, 100 - Math.min(Math.abs(p), cfg.half + 1) * 12));
+  const capOpacity = useTransform([phase, reveal], (latest: number[]) => {
+    const [p, r] = latest;
+    const center = Math.abs(p) <= 0.5 ? 1 : 0;
+    if (r >= 0.6) return 1;
+    return Math.max(center, r > 0.45 ? (r - 0.45) / 0.15 : 0);
+  });
+  const socialOpacity = useTransform(phase, (p) => (Math.abs(p) <= 0.5 ? 1 : 0));
 
-      {/* Uppercase position / title */}
-      <p className="text-xs md:text-sm font-mono text-burgundy uppercase tracking-widest mt-3">
-        {member.position}
-      </p>
+  useEffect(() => {
+    if (!inView) return;
+    if (reduced) {
+      reveal.set(1);
+      return;
+    }
+    const delay = 0.15 + Math.abs(phaseNum) * 0.12;
+    const controls = animate(reveal, 1, { delay, duration: 1, ease: EASE });
+    return () => controls.stop();
+  }, [inView, reduced, reveal, phaseNum]);
 
-      {/* Short burgundy divider */}
-      <div className="w-16 h-[1px] bg-burgundy/40 my-6"></div>
+  const [canHover, setCanHover] = useState(cardOpacity(Math.abs(phaseNum), cfg.half, fadeStart, fadeEnd, FINAL_FADE) * reveal.get() > 0.15);
+  const canHoverRef = useRef(canHover);
+  const showSocials = Math.abs(phaseNum) <= 0.5;
+  const canInteract = useTransform([phase, reveal], (latest: number[]) =>
+    cardOpacity(latest[0], cfg.half, fadeStart, fadeEnd, FINAL_FADE) * latest[1] > 0.15
+  );
+  useMotionValueEvent(canInteract, 'change', (v) => {
+    if (v !== canHoverRef.current) {
+      canHoverRef.current = v;
+      setCanHover(v);
+    }
+  });
 
-      {/* Subtle quote / message card */}
-      {member.quote && (
-        <div className="relative bg-white/40 border border-charcoal/5 p-5 rounded-2xl shadow-sm backdrop-blur-sm w-full">
-          <Quote className="absolute -top-3 -left-3 text-gold/30 w-8 h-8 fill-gold/10" />
-          <p className="font-playfair italic text-lg text-charcoal/90 leading-relaxed pl-4">
-            "{member.quote}"
-          </p>
-        </div>
-      )}
+  const startHover = () => {
+    animate(hoverFactor, 1, { type: 'spring', stiffness: 300, damping: 22 });
+  };
+  const endHover = () => {
+    animate(hoverFactor, 0, { type: 'spring', stiffness: 220, damping: 24 });
+  };
 
-      {/* Short bio */}
-      {member.bio && (
-        <p className="text-sm text-charcoal/70 leading-relaxed mt-5 font-sans w-full">
-          {member.bio}
-        </p>
-      )}
+  return (
+    <motion.div
+      className="absolute top-0 will-change-transform"
+      style={{ width: cfg.cardW, height: cfg.cardH, left: '50%', marginLeft: -cfg.cardW / 2, transformStyle: 'preserve-3d' }}
+      animate={reduced ? { y: 0 } : { y: [FLOAT_AMPLITUDE, -FLOAT_AMPLITUDE] }}
+      transition={
+        reduced
+          ? undefined
+          : { duration: FLOAT_MS / 1000, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: (Math.abs(phaseNum) % 5) * 0.55 }
+      }
+    >
+      <div className="will-change-transform" style={{ transformStyle: 'preserve-3d' }}>
+        <motion.div
+          className="relative will-change-transform cursor-pointer"
+          style={{ x, y: yOff, rotate, scale, zIndex, opacity, z: depth, transformStyle: 'preserve-3d', pointerEvents: canHover ? 'auto' : 'none' }}
+          onHoverStart={startHover}
+          onHoverEnd={endHover}
+        >
+          <div className="relative overflow-hidden bg-charcoal" style={{ width: cfg.cardW, height: cfg.cardH, borderRadius: CARD_RADIUS }}>
+            <img src={member.photo} alt={member.name} loading="lazy" draggable={false} className="w-full h-full object-cover" />
+          </div>
 
-      {/* Contact & social information — bottom */}
-      <div className="mt-7 pt-6 border-t border-charcoal/10 w-full flex flex-wrap items-center gap-x-6 gap-y-4 justify-center md:justify-start">
-        {member.email && (
-          <a
-            href={`mailto:${member.email}`}
-            className="flex items-center gap-2 text-xs font-mono text-charcoal/60 hover:text-burgundy transition-colors duration-300"
+          <motion.div
+            className="absolute left-1/2 -translate-x-1/2 text-center"
+            style={{ top: cfg.cardH + 20, width: cfg.cardW + 90, opacity: capOpacity }}
           >
-            <Mail size={14} className="text-burgundy" />
-            <span className="break-all">{member.email}</span>
-          </a>
-        )}
-        <div className="flex items-center gap-2">
-          {member.facebook && (
-            <a
-              href={member.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${member.name} on Facebook`}
-              className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
-            >
-              <Facebook size={14} />
-            </a>
-          )}
-          {member.linkedin && (
-            <a
-              href={member.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${member.name} on LinkedIn`}
-              className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
-            >
-              <Linkedin size={14} />
-            </a>
-          )}
-          {member.instagram && (
-            <a
-              href={member.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${member.name} on Instagram`}
-              className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
-            >
-              <Instagram size={14} />
-            </a>
-          )}
-        </div>
+            <h3 className="font-playfair font-bold text-charcoal leading-tight" style={{ fontSize: Math.round(22 * cfg.captionScale) }}>
+              {member.name}
+            </h3>
+            <p className="font-mono text-burgundy uppercase tracking-widest mt-1" style={{ fontSize: Math.round(11 * cfg.captionScale) }}>
+              {member.position}
+            </p>
+            {member.quote && (
+              <p className="font-playfair italic text-charcoal/80 mt-2 leading-relaxed" style={{ fontSize: Math.round(14 * cfg.captionScale) }}>
+                <Quote size={12} className="inline text-gold/70 mr-1" />
+                {member.quote}
+              </p>
+            )}
+            <motion.div className="flex items-center justify-center gap-2 mt-3" style={{ opacity: socialOpacity, pointerEvents: showSocials ? 'auto' : 'none' }}>
+              {member.email && (
+                <a
+                  href={`mailto:${member.email}`}
+                  aria-label={`Email ${member.name}`}
+                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
+                >
+                  <Mail size={14} />
+                </a>
+              )}
+              {member.facebook && (
+                <a
+                  href={member.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${member.name} on Facebook`}
+                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
+                >
+                  <Facebook size={14} />
+                </a>
+              )}
+              {member.linkedin && (
+                <a
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${member.name} on LinkedIn`}
+                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
+                >
+                  <Linkedin size={14} />
+                </a>
+              )}
+              {member.instagram && (
+                <a
+                  href={member.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${member.name} on Instagram`}
+                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
+                >
+                  <Instagram size={14} />
+                </a>
+              )}
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
-  </div>
-);
+    </motion.div>
+  );
+};
 
 export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) => {
-  const targetRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [offset, setOffset] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const tiltAreaRef = useRef<HTMLDivElement>(null);
+  const reduced = !!useReducedMotion();
+  const inView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const [tierName, setTierName] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
-  const sorted = [...members].sort(
-    (a, b) => roleRank(a.position) - roleRank(b.position) || a.order - b.order
+  const sorted = useMemo(
+    () => [...members].sort((a, b) => roleRank(a.position) - roleRank(b.position) || a.order - b.order),
+    [members]
   );
   const total = sorted.length;
 
-  // Measure the real horizontal travel distance so every card is fully reachable,
-  // regardless of how card widths vary (names, bios, portraits).
+  const reveal = useMotionValue(0);
+  const fullSpreadMV = useMotionValue(1);
+  const rotY = useMotionValue(0);
+  const rotX = useMotionValue(0);
+  const tiltRY = useSpring(rotY, { stiffness: 120, damping: 18, mass: 0.5 });
+  const tiltRX = useSpring(rotX, { stiffness: 120, damping: 18, mass: 0.5 });
+
+  const cfg = TIERS.find((t) => t.name === tierName)!.cfg;
+  const fadeEnd = Math.min(Math.max(cfg.fadeEnd, total / 2 - 0.5), total / 2 + 0.6);
+  const fadeStart = Math.min(cfg.fadeStart, fadeEnd);
+  const maxOffset = Math.floor(total / 2);
+
   useEffect(() => {
-    const measure = () => {
-      if (!trackRef.current || !targetRef.current) return;
-      const trackWidth = trackRef.current.scrollWidth;
-      const containerWidth = targetRef.current.clientWidth;
-      setOffset(Math.max(0, trackWidth - containerWidth));
+    const mqs = TIERS.map((t) => ({ name: t.name, mq: window.matchMedia(t.query) }));
+    const apply = () => {
+      for (const { name, mq } of mqs) {
+        if (mq.matches) {
+          setTierName(name);
+          return;
+        }
+      }
     };
-    measure();
-    window.addEventListener('resize', measure);
-    const ro = new ResizeObserver(measure);
-    if (trackRef.current) ro.observe(trackRef.current);
-    return () => {
-      window.removeEventListener('resize', measure);
-      ro.disconnect();
+    apply();
+    mqs.forEach(({ mq }) => mq.addEventListener('change', apply));
+    return () => mqs.forEach(({ mq }) => mq.removeEventListener('change', apply));
+  }, []);
+
+  useEffect(() => {
+    if (maxOffset === 0) return;
+    const compute = () => {
+      const base = SLOT_SPACING * cfg.spacing;
+      const vw = window.innerWidth;
+      const target = Math.max(0.05, (vw / 2 - cfg.cardW / 2 - PAGE_MARGIN) / (maxOffset * base));
+      fullSpreadMV.set(target);
     };
-  }, [members]);
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, [cfg, maxOffset, fullSpreadMV]);
 
-  // Track scroll progress of the pinned container
-  const { scrollYProgress } = useScroll({ target: targetRef });
+  const handleTiltMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = tiltAreaRef.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0 || rect.height === 0) return;
+    const nx = Math.max(-0.5, Math.min(0.5, (e.clientX - rect.left) / rect.width - 0.5));
+    const ny = Math.max(-0.5, Math.min(0.5, (e.clientY - rect.top) / rect.height - 0.5));
+    rotY.set(-nx * MAX_TILT * 2);
+    rotX.set(ny * MAX_TILT * 2);
+  };
 
-  // Map scroll progress to the measured horizontal translation (page stays pinned)
-  const x = useTransform(scrollYProgress, (p) => (total > 1 ? -offset * p : 0));
+  const handleTiltLeave = () => {
+    rotX.set(0);
+    rotY.set(0);
+  };
+
+  if (total === 0) return null;
 
   return (
-    <section
-      ref={targetRef}
-      className="relative bg-beige"
-      style={{ height: `${(total + 1) * 60}vh` }}
-    >
-      {/* Sticky container that stays in viewport */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden py-12">
-        {/* Background soft ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gold/5 rounded-full blur-[150px] pointer-events-none" />
+    <section ref={sectionRef} className="relative bg-beige overflow-hidden py-20 md:py-28">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gold/5 rounded-full blur-[150px] pointer-events-none" />
 
-        {/* Section Header */}
-        <div className="relative max-w-6xl mx-auto w-full px-6 md:px-12 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 z-20">
-          <div>
-            <span className="text-burgundy font-mono uppercase tracking-widest text-xs block mb-3">
-              Behind the Lenses
-            </span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-charcoal leading-tight">
-              Executive <span className="italic text-burgundy font-normal">Members</span>
-            </h2>
-          </div>
-          <div className="flex flex-col items-start md:items-end">
-            <p className="text-sm font-mono text-charcoal/50 uppercase tracking-widest">
-              ✦ Scroll down to traverse
-            </p>
-            <div className="w-24 h-[1px] bg-burgundy/30 mt-2"></div>
-          </div>
-        </div>
+      <div className="relative z-10 mb-10 md:mb-14 px-6 text-center">
+        <span className="text-burgundy font-mono uppercase tracking-widest text-xs block mb-3">Behind the Lenses</span>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-charcoal leading-tight">
+          Executive <span className="italic text-burgundy font-normal">Members</span>
+        </h2>
+      </div>
 
-        {/* Horizontal moving members track */}
-        <div className="relative flex-1 flex items-center z-20">
-          <motion.div ref={trackRef} style={{ x }} className="flex items-center gap-12 px-6 md:px-12 w-max will-change-transform">
-            {sorted.map((member, i) => (
-              <MemberCard key={member.id} member={member} index={i} />
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Bottom Progress Bar */}
-        <div className="relative max-w-6xl mx-auto w-full px-6 md:px-12 mt-6 z-20">
-          <div className="w-full h-[2px] bg-charcoal/10 rounded-full overflow-hidden">
-            <motion.div className="h-full bg-burgundy origin-left" style={{ scaleX: scrollYProgress }} />
+      <div
+        ref={tiltAreaRef}
+        className="relative z-10 w-full max-w-4xl mx-auto"
+        style={{ perspective: PERSPECTIVE }}
+        onMouseMove={reduced ? undefined : handleTiltMove}
+        onMouseLeave={reduced ? undefined : handleTiltLeave}
+      >
+        <motion.div
+          className="relative flex items-start justify-center"
+          style={{ rotateX: tiltRX, rotateY: tiltRY, transformStyle: 'preserve-3d' }}
+        >
+          <div
+            className="relative"
+            style={{
+              width: cfg.cardW,
+              height: cfg.cardH + Math.round(CAPTION_RESERVE * cfg.captionScale),
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            {sorted.map((member, i) => {
+              const d = hierarchyPhase(i);
+              if (Math.abs(d) > maxOffset) return null;
+              return (
+                <FanCard
+                  key={member.id}
+                  member={member}
+                  phase={d}
+                  spread={fullSpreadMV}
+                  reveal={reveal}
+                  cfg={cfg}
+                  fadeStart={fadeStart}
+                  fadeEnd={fadeEnd}
+                  reduced={reduced}
+                  inView={inView}
+                />
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
