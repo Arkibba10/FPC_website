@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --font-playfair: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Manrope', monospace;
+  --font-script: 'Great Vibes', cursive;
+  
+  --color-burgundy: #6E1E2A;
+  --color-burgundy-light: #8E2E3A;
+  --color-gold: #C8A96A;
+  --color-beige: #F7F2EB;
+  --color-charcoal: #2A2A2A;
+  --color-charcoal-dark: #181818;
+}
+
+/* Custom Film Grain Noise Image Background Utility */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #181818;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6E1E2A;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C8A96A;
+}
+
+/* Projector Flicker Animation */
+@keyframes flicker {
+  0%, 100% { opacity: 0.96; }
+  50% { opacity: 1; }
+  15%, 85% { opacity: 0.98; }
+  35%, 65% { opacity: 0.97; }
+}
+
+.animate-flicker {
+  animation: flicker 0.12s infinite;
+}
+
+/* Base Body Styles */
+body {
+  background-color: #2A2A2A;
+  color: #FFFFFF;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+}
