@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { motion, useAnimationFrame, useMotionValue } from 'framer-motion';
+import { motion, useAnimationFrame, useInView, useMotionValue } from 'framer-motion';
 import { Flashlight, Timer, FlipHorizontal2 } from 'lucide-react';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -55,12 +55,15 @@ const FOCUS_CORNERS = [
 ];
 
 const PolaroidCarousel: React.FC = () => {
+  const wrapRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const seqRef = useRef(0);
   const x = useMotionValue(0);
   const [slow, setSlow] = useState(false);
+  const isInView = useInView(wrapRef, { margin: '100px' });
 
   useAnimationFrame((_, delta) => {
+    if (!isInView) return;
     const track = trackRef.current;
     if (!track) return;
     if (!seqRef.current) seqRef.current = track.scrollWidth / COPIES;
@@ -73,6 +76,7 @@ const PolaroidCarousel: React.FC = () => {
 
   return (
     <div
+      ref={wrapRef}
       className="absolute inset-x-0 top-[4%] h-[36cqw] max-lg:landscape:top-[2%] max-lg:landscape:h-[27cqh] lg:top-[4%] lg:h-[16vw] z-10 overflow-hidden"
       onMouseEnter={() => setSlow(true)}
       onMouseLeave={() => setSlow(false)}
@@ -103,8 +107,12 @@ const PolaroidCarousel: React.FC = () => {
   );
 };
 
-const LandingContent: React.FC = () => (
-  <div className="relative w-full h-full overflow-hidden bg-[#F5F0E8]">
+const LandingContent: React.FC = () => {
+  const dustRef = useRef<HTMLDivElement>(null);
+  const dustInView = useInView(dustRef, { margin: '100px' });
+
+  return (
+  <div ref={dustRef} className="relative w-full h-full overflow-hidden bg-[#F5F0E8]">
     <div className="absolute inset-0 z-0 pointer-events-none bg-noise opacity-[0.05]" />
 
     <PolaroidCarousel />
@@ -114,7 +122,7 @@ const LandingContent: React.FC = () => (
         key={i}
         className="absolute rounded-full bg-[#151313]/35 z-20"
         style={{ left: d.x + '%', top: d.y + '%', width: d.s * 0.16 + 'vw', height: d.s * 0.16 + 'vw' }}
-        animate={{ y: [0, -14, 0], opacity: [0.2, 0.8, 0.2] }}
+        animate={dustInView ? { y: [0, -14, 0], opacity: [0.2, 0.8, 0.2] } : { opacity: 0.5 }}
         transition={{ repeat: Infinity, duration: d.dur, delay: d.d, ease: 'easeInOut' }}
       />
     ))}
@@ -189,7 +197,8 @@ const LandingContent: React.FC = () => (
       </motion.div>
     </div>
   </div>
-);
+  );
+};
 
 const CameraUI: React.FC = () => (
   <div className="absolute inset-0 z-30 pointer-events-none select-none font-mono">

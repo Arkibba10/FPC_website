@@ -1,8 +1,5 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
-
-const DUST_COUNT =
-  typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches ? 18 : 34;
+import React, { useEffect, useMemo, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const seededRng = (seed: number) => {
   let a = seed;
@@ -15,10 +12,34 @@ const seededRng = (seed: number) => {
   };
 };
 
+// Responsive particle budget: fewer dust motes on small screens so the
+// compositor has less to animate. Desktop keeps the full cinematic density.
+const getDustCount = () => {
+  if (typeof window === 'undefined') return 34;
+  if (window.matchMedia('(max-width: 640px)').matches) return 12;
+  if (window.matchMedia('(max-width: 1024px)').matches) return 20;
+  return 34;
+};
+
 const FloatingDust: React.FC = () => {
+  const reduceMotion = useReducedMotion();
+  const [dustCount, setDustCount] = useState(getDustCount);
+
+  // React to viewport changes (portrait -> landscape, resize, etc.) instead of
+  // evaluating the breakpoint once at module load.
+  useEffect(() => {
+    const queries = [
+      window.matchMedia('(max-width: 640px)'),
+      window.matchMedia('(max-width: 1024px)'),
+    ];
+    const update = () => setDustCount(getDustCount());
+    queries.forEach((q) => q.addEventListener('change', update));
+    return () => queries.forEach((q) => q.removeEventListener('change', update));
+  }, []);
+
   const particles = useMemo(() => {
     const rng = seededRng(0x9e3779b9);
-    return Array.from({ length: DUST_COUNT }).map((_, i) => {
+    return Array.from({ length: dustCount }).map((_, i) => {
       const r = rng();
       return {
         id: i,
@@ -34,7 +55,31 @@ const FloatingDust: React.FC = () => {
         ringSize: 5 + rng() * 4,
       };
     });
-  }, []);
+  }, [dustCount]);
+
+  // Respect users who prefer reduced motion: keep the dust still but visible.
+  if (reduceMotion) {
+    return (
+      <div aria-hidden className="fixed inset-0 overflow-hidden pointer-events-none select-none z-[45]">
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="absolute"
+            style={{
+              left: p.left + '%',
+              top: p.start + 'vh',
+              width: p.isRing ? p.ringSize : p.size,
+              height: p.isRing ? p.ringSize : p.size,
+              borderRadius: '9999px',
+              backgroundColor: p.isRing ? 'transparent' : 'rgba(200,169,106,0.5)',
+              border: p.isRing ? '1px solid rgba(200,169,106,0.4)' : 'none',
+              opacity: p.peak,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div aria-hidden className="fixed inset-0 overflow-hidden pointer-events-none select-none z-[45]">

@@ -33,10 +33,10 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden py-12 relative">
 
         {/* Scroll-movable film reels */}
-        <motion.div style={{ y: reelY }} className="absolute left-3 md:left-8 top-16 z-10 opacity-30 pointer-events-none">
+        <motion.div style={{ y: reelY }} className="absolute left-3 md:left-8 top-16 z-10 opacity-30 pointer-events-none will-change-transform">
           <FilmReel size={90} />
         </motion.div>
-        <motion.div style={{ y: reelY2 }} className="absolute right-3 md:right-8 bottom-16 z-10 opacity-30 pointer-events-none">
+        <motion.div style={{ y: reelY2 }} className="absolute right-3 md:right-8 bottom-16 z-10 opacity-30 pointer-events-none will-change-transform">
           <FilmReel size={70} />
         </motion.div>
 
@@ -60,10 +60,10 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
 
         {/* Horizontal Moving Content */}
         <div className="relative flex-1 flex items-center">
-          <motion.div style={{ x }} className="flex flex-col w-max">
+          <motion.div style={{ x }} className="flex flex-col w-max will-change-transform">
             {/* Top film band with sprocket holes */}
             <div className="relative h-7 md:h-10 bg-[#151515] border-2 border-b-0 border-[#2A2A2A] rounded-t-2xl overflow-hidden">
-              <motion.div style={{ backgroundPositionX: sprocketX }} className="film-holes absolute inset-0" />
+              <motion.div style={{ x: sprocketX }} className="film-holes absolute inset-y-0 left-0 w-[300%] will-change-transform" />
             </div>
 
             {/* Card row */}
@@ -141,7 +141,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
 
             {/* Bottom film band with sprocket holes */}
             <div className="relative h-7 md:h-10 bg-[#151515] border-2 border-t-0 border-[#2A2A2A] rounded-b-2xl overflow-hidden">
-              <motion.div style={{ backgroundPositionX: sprocketX }} className="film-holes absolute inset-0" />
+              <motion.div style={{ x: sprocketX }} className="film-holes absolute inset-y-0 left-0 w-[300%] will-change-transform" />
             </div>
           </motion.div>
         </div>

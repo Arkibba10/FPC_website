@@ -1,13 +1,31 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Alumni } from '../types';
 import { Briefcase, GraduationCap } from 'lucide-react';
 
 export const AlumniCarousels: React.FC<{ alumni: Alumni[] }> = ({ alumni }) => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isInView, setIsInView] = useState(true);
+
   // Duplicate the array to ensure seamless infinite looping
   const duplicatedAlumni = [...alumni, ...alumni, ...alumni];
 
+  // Pause the CSS marquees while the section is off-screen so the compositor
+  // isn't animating two wide layers nobody can see.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { rootMargin: '200px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const paused = isInView ? undefined : 'true';
+
   return (
-    <section className="py-24 bg-charcoal overflow-hidden relative">
+    <section ref={sectionRef} className="py-24 bg-charcoal overflow-hidden relative">
       {/* Background Cinematic Lighting */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-burgundy/5 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] pointer-events-none"></div>
@@ -27,12 +45,10 @@ export const AlumniCarousels: React.FC<{ alumni: Alumni[] }> = ({ alumni }) => {
       <div className="flex flex-col gap-10 relative z-10">
         
         {/* ROW 1: Scrolling Left */}
-        <div className="w-full overflow-hidden py-4 group">
-          <div 
-            className="flex gap-6 w-max animate-scroll-left hover:[animation-play-state:paused]"
-            style={{
-              animation: 'scrollLeft 38s linear infinite'
-            }}
+        <div className="w-full overflow-hidden py-4">
+          <div
+            data-paused={paused}
+            className="flex gap-6 w-max alumni-scroll-left group"
           >
             {duplicatedAlumni.map((item, idx) => (
               <div
@@ -76,12 +92,10 @@ export const AlumniCarousels: React.FC<{ alumni: Alumni[] }> = ({ alumni }) => {
         </div>
 
         {/* ROW 2: Scrolling Right */}
-        <div className="w-full overflow-hidden py-4 group">
-          <div 
-            className="flex gap-6 w-max animate-scroll-right hover:[animation-play-state:paused]"
-            style={{
-              animation: 'scrollRight 38s linear infinite'
-            }}
+        <div className="w-full overflow-hidden py-4">
+          <div
+            data-paused={paused}
+            className="flex gap-6 w-max alumni-scroll-right group"
           >
             {duplicatedAlumni.map((item, idx) => (
               <div
@@ -128,6 +142,16 @@ export const AlumniCarousels: React.FC<{ alumni: Alumni[] }> = ({ alumni }) => {
 
       {/* CSS Keyframes injected directly */}
       <style>{`
+        .alumni-scroll-left,
+        .alumni-scroll-right {
+          will-change: transform;
+        }
+        .alumni-scroll-left {
+          animation: scrollLeft 38s linear infinite;
+        }
+        .alumni-scroll-right {
+          animation: scrollRight 38s linear infinite;
+        }
         @keyframes scrollLeft {
           0% { transform: translateX(0); }
           100% { transform: translateX(-33.333%); }
@@ -135,6 +159,20 @@ export const AlumniCarousels: React.FC<{ alumni: Alumni[] }> = ({ alumni }) => {
         @keyframes scrollRight {
           0% { transform: translateX(-33.333%); }
           100% { transform: translateX(0); }
+        }
+        [data-paused="true"].alumni-scroll-left,
+        [data-paused="true"].alumni-scroll-right {
+          animation-play-state: paused;
+        }
+        .alumni-scroll-left:hover,
+        .alumni-scroll-right:hover {
+          animation-play-state: paused;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .alumni-scroll-left,
+          .alumni-scroll-right {
+            animation: none;
+          }
         }
       `}</style>
     </section>

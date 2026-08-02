@@ -46,7 +46,7 @@ export const ConvenerShowcase: React.FC = () => {
               {isInView && !videoFailed ? (
                 <video
                   ref={videoRef}
-                  src="/videos/convener.mov"
+                  src="/videos/convener.mp4"
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   muted
                   playsInline
