@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion, useAnimationFrame, useMotionValue } from 'framer-motion';
-import { Settings, Zap, Flashlight, Timer, FlipHorizontal2 } from 'lucide-react';
+import { Flashlight, Timer, FlipHorizontal2 } from 'lucide-react';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -193,63 +193,46 @@ const LandingContent: React.FC = () => (
 
 const CameraUI: React.FC = () => (
   <div className="absolute inset-0 z-30 pointer-events-none select-none font-mono">
-    <div className="absolute left-1/3 top-0 bottom-0 w-px bg-[#151313]/10 lg:bg-white/[0.06]" />
-    <div className="absolute left-2/3 top-0 bottom-0 w-px bg-[#151313]/10 lg:bg-white/[0.06]" />
-    <div className="absolute top-1/3 left-0 right-0 h-px bg-[#151313]/10 lg:bg-white/[0.06]" />
-    <div className="absolute top-2/3 left-0 right-0 h-px bg-[#151313]/10 lg:bg-white/[0.06]" />
-
-    <div className="absolute inset-x-0 top-0 h-[10%] flex items-start justify-between px-[1.6%] pt-[0.9%] text-[#151313] lg:text-white lg:[text-shadow:0_1px_2px_rgba(0,0,0,0.6)] max-lg:landscape:top-auto max-lg:landscape:bottom-0 max-lg:landscape:h-[8%] max-lg:landscape:items-center max-lg:landscape:pt-0 max-lg:landscape:pb-[1%] lg:top-auto lg:bottom-0 lg:h-[8%] lg:items-center lg:pt-0 lg:pb-[1%] lg:pr-[13%]">
-      <div className="flex items-center gap-[2.8cqw] max-lg:landscape:gap-[3.2cqh] max-lg:landscape:flex-1 max-lg:landscape:justify-center lg:gap-[1.2vw] lg:flex-1 lg:justify-center text-[3.8cqw] max-lg:landscape:text-[3.2cqh] lg:text-[0.7vw] tracking-[0.18em] uppercase">
-        <span className="font-bold text-[#151313] lg:text-white/90">Photo</span>
-        <span className="text-[#151313]/45 lg:text-white/45">Video</span>
-        <span className="hidden lg:inline text-white/45">Slo-Mo</span>
-        <span className="hidden lg:inline text-white/45">Pano</span>
-      </div>
-      <div className="hidden lg:flex items-center gap-[0.8vw] text-[0.6vw] tracking-[0.12em] uppercase">
-        <span className="bg-white/[0.08] rounded-[0.25vw] px-[0.5vw] py-[0.12vw] text-[#D9BE84]">HDR</span>
-        <span className="bg-white/[0.08] rounded-[0.25vw] px-[0.5vw] py-[0.12vw] text-white/80">RAW</span>
-        <Zap size={12} className="w-[0.85vw] h-[0.85vw] text-white/60" />
-        <Settings size={12} className="w-[0.85vw] h-[0.85vw] text-white/60" />
+    <div className="absolute inset-x-0 top-0 h-[10%] flex items-start justify-center pt-[1.6%] max-lg:landscape:justify-start max-lg:landscape:pl-[3%] lg:justify-start lg:pl-[2.5%] text-[#151313]">
+      <div className="flex items-center gap-[2.4cqw] max-lg:landscape:gap-[2cqh] lg:gap-[0.7vw]">
+        <Flashlight size={12} className="w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] text-[#151313]/70" />
+        <span className="rounded-full bg-[#151313]/[0.07] border border-[#151313]/15 px-[1.6cqw] py-[0.5cqw] max-lg:landscape:px-[1.3cqh] max-lg:landscape:py-[0.4cqh] lg:px-[0.45vw] lg:py-[0.14vw] text-[2.8cqw] max-lg:landscape:text-[2.3cqh] lg:text-[0.6vw] leading-none text-[#151313]">1x</span>
+        <span className="relative w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] rounded-full border-[0.24cqw] max-lg:landscape:border-[0.2cqh] lg:border-[0.05vw] border-[#151313]/70">
+          <span className="absolute inset-[0.45cqw] max-lg:landscape:inset-[0.4cqh] lg:inset-[0.11vw] rounded-full border-[0.24cqw] max-lg:landscape:border-[0.2cqh] lg:border-[0.05vw] border-[#151313]/70" />
+        </span>
+        <Timer size={12} className="w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] text-[#151313]/70" />
       </div>
     </div>
 
-    <div className="absolute left-[0.7%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-[2.2cqw] max-lg:landscape:gap-[2cqh] lg:gap-[0.6vw] text-[3.2cqw] max-lg:landscape:text-[2.7cqh] lg:text-[0.62vw] uppercase text-[#151313]/55 lg:text-white/50">
-      <span>0.5x</span>
-      <span className="font-bold text-[#151313] lg:text-white/90">1x</span>
-      <span>2x</span>
-      <span>5x</span>
+    <div className="absolute left-[45%] top-[15%] w-[14cqw] h-[14cqw] max-lg:landscape:top-[16%] max-lg:landscape:w-[9.5cqh] max-lg:landscape:h-[9.5cqh] lg:top-[25%] lg:w-[6vw] lg:h-[6vw]">
+      <span className="absolute top-0 left-0 w-[3cqw] h-[3cqw] border-t-[0.55cqw] border-l-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-t-[0.32cqh] max-lg:landscape:border-l-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 rounded-tl-[0.3vw]" />
+      <span className="absolute top-0 right-0 w-[3cqw] h-[3cqw] border-t-[0.55cqw] border-r-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-t-[0.32cqh] max-lg:landscape:border-r-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 rounded-tr-[0.3vw]" />
+      <span className="absolute bottom-0 left-0 w-[3cqw] h-[3cqw] border-b-[0.55cqw] border-l-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-b-[0.32cqh] max-lg:landscape:border-l-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 rounded-bl-[0.3vw]" />
+      <span className="absolute bottom-0 right-0 w-[3cqw] h-[3cqw] border-b-[0.55cqw] border-r-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-b-[0.32cqh] max-lg:landscape:border-r-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 rounded-br-[0.3vw]" />
     </div>
 
-    <div className="absolute left-[45%] top-[13%] w-[12cqw] h-[12cqw] max-lg:landscape:top-[16%] max-lg:landscape:w-[8.8cqh] max-lg:landscape:h-[8.8cqh] lg:top-[25%] lg:w-[6vw] lg:h-[6vw]">
-      <span className="absolute top-0 left-0 w-[2.7cqw] h-[2.7cqw] border-t-[0.5cqw] border-l-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-t-[0.3cqh] max-lg:landscape:border-l-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-tl-[0.3vw]" />
-      <span className="absolute top-0 right-0 w-[2.7cqw] h-[2.7cqw] border-t-[0.5cqw] border-r-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-t-[0.3cqh] max-lg:landscape:border-r-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-tr-[0.3vw]" />
-      <span className="absolute bottom-0 left-0 w-[2.7cqw] h-[2.7cqw] border-b-[0.5cqw] border-l-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-b-[0.3cqh] max-lg:landscape:border-l-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-bl-[0.3vw]" />
-      <span className="absolute bottom-0 right-0 w-[2.7cqw] h-[2.7cqw] border-b-[0.5cqw] border-r-[0.5cqw] max-lg:landscape:w-[1.6cqh] max-lg:landscape:h-[1.6cqh] max-lg:landscape:border-b-[0.3cqh] max-lg:landscape:border-r-[0.3cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 lg:border-white/50 rounded-br-[0.3vw]" />
-      <span
-        className="absolute -bottom-[1.7vw] left-[0.3vw] text-[0.58vw] hidden lg:block lg:[text-shadow:0_1px_2px_rgba(0,0,0,0.6)]"
-      >
-        1x
-      </span>
+    <div className="absolute inset-x-0 bottom-[17%] flex justify-center max-lg:landscape:inset-x-auto max-lg:landscape:bottom-auto max-lg:landscape:top-1/2 max-lg:landscape:-translate-y-1/2 max-lg:landscape:right-[13.5%] lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:right-[12.5%]">
+      <div className="flex items-center gap-[0.4cqw] rounded-full bg-white/75 shadow-[0_0.3cqw_0.9cqw_rgba(0,0,0,0.18)] p-[0.7cqw] max-lg:landscape:flex-col max-lg:landscape:gap-[0.5cqh] max-lg:landscape:p-[0.7cqh] lg:flex-col lg:gap-[0.2vw] lg:p-[0.26vw]">
+        <span className="rounded-full bg-[#151313] text-[#F5F0E8] px-[2.2cqw] py-[0.8cqw] max-lg:landscape:px-[1cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.5vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none">Photo</span>
+        <span className="px-[1.8cqw] py-[0.8cqw] max-lg:landscape:px-[0.5cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/60">Video</span>
+        <span className="hidden max-lg:landscape:inline lg:inline px-[1.8cqw] py-[0.8cqw] max-lg:landscape:px-[0.5cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/60">Portrait</span>
+        <span className="hidden lg:inline px-[1.8cqw] py-[0.8cqw] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/60">Pano</span>
+      </div>
     </div>
 
-    <div className="absolute inset-x-0 bottom-0 h-[15%] flex items-center justify-between px-[2.5%] text-[#151313] lg:text-white max-lg:landscape:inset-x-auto max-lg:landscape:top-0 max-lg:landscape:right-0 max-lg:landscape:bottom-0 max-lg:landscape:left-auto max-lg:landscape:w-[14%] max-lg:landscape:h-auto max-lg:landscape:flex-col max-lg:landscape:items-center max-lg:landscape:justify-between max-lg:landscape:px-0 max-lg:landscape:py-[2.5%] lg:inset-x-auto lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:w-[12%] lg:h-auto lg:flex-col lg:items-center lg:justify-between lg:px-0 lg:py-[2.5%]">
-      <div className="relative w-[11cqw] max-lg:landscape:w-[10.5cqh] lg:w-[52%] aspect-[4/3] rounded-[0.5vw] overflow-hidden border border-[#151313]/30 lg:border-white/30 shadow-md">
+    <div className="absolute inset-x-0 bottom-0 h-[15%] flex items-center justify-between px-[2.5%] text-[#151313] max-lg:landscape:inset-x-auto max-lg:landscape:top-0 max-lg:landscape:right-0 max-lg:landscape:bottom-0 max-lg:landscape:left-auto max-lg:landscape:w-[12%] max-lg:landscape:h-auto max-lg:landscape:flex-col max-lg:landscape:items-center max-lg:landscape:justify-between max-lg:landscape:px-0 max-lg:landscape:pt-[3%] max-lg:landscape:pb-[3%] lg:inset-x-auto lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:w-[12%] lg:h-auto lg:flex-col lg:items-center lg:justify-between lg:px-0 lg:pt-[3%] lg:pb-[3%]">
+      <div className="relative w-[12cqw] max-lg:landscape:w-[12cqh] lg:w-[55%] aspect-[4/3] rounded-[0.8cqw] max-lg:landscape:rounded-[0.5cqh] lg:rounded-[0.3vw] overflow-hidden border border-[#151313]/25 shadow-md">
         <img src="/images/gallery1.jpg" className="w-full h-full object-cover" />
-        <span className="absolute bottom-0 inset-x-0 bg-[#151313]/10 lg:bg-black/40 text-[#151313]/80 lg:text-white text-[1.2cqw] max-lg:landscape:text-[1.1cqh] lg:text-[0.45vw] tracking-widest text-center py-[0.12vw]">PHOTO</span>
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-[1.4cqw] max-lg:landscape:gap-[1.2cqh] max-lg:landscape:static max-lg:landscape:left-auto max-lg:landscape:translate-x-0 lg:gap-[0.4vw] lg:static lg:left-auto lg:translate-x-0">
-        <div className="relative w-[16cqw] h-[16cqw] max-lg:landscape:w-[13cqh] max-lg:landscape:h-[13cqh] lg:w-[4.8vw] lg:h-[4.8vw] rounded-full border-[0.55cqw] max-lg:landscape:border-[0.34cqh] lg:border-[0.26vw] border-[#151313]/70 lg:border-white/70 flex items-center justify-center shadow-[0_0.5vw_1vw_rgba(0,0,0,0.35)]">
-          <div className="w-[10.6cqw] h-[10.6cqw] max-lg:landscape:w-[8.8cqh] max-lg:landscape:h-[8.8cqh] lg:w-[3.1vw] lg:h-[3.1vw] rounded-full bg-white" />
+      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center max-lg:landscape:static max-lg:landscape:left-auto max-lg:landscape:translate-x-0 lg:static lg:left-auto lg:translate-x-0">
+        <div className="w-[18cqw] h-[18cqw] max-lg:landscape:w-[16cqh] max-lg:landscape:h-[16cqh] lg:w-[4.8vw] lg:h-[4.8vw] rounded-full border-[0.45cqw] max-lg:landscape:border-[0.4cqh] lg:border-[0.26vw] border-[#151313]/70 bg-[#F5F0E8]/50 flex items-center justify-center shadow-[0_0.5vw_1vw_rgba(0,0,0,0.25)]">
+          <div className="w-[13cqw] h-[13cqw] max-lg:landscape:w-[11.5cqh] max-lg:landscape:h-[11.5cqh] lg:w-[3.5vw] lg:h-[3.5vw] rounded-full bg-white" />
         </div>
-        <span className="text-[1.8cqw] max-lg:landscape:text-[1.3cqh] lg:text-[0.45vw] tracking-[0.3em] uppercase text-[#151313]/60 lg:text-white/60">Photo</span>
       </div>
 
-      <div className="flex items-center gap-[3.5cqw] max-lg:landscape:gap-[3.2cqh] lg:gap-[1.1vw]">
-        <Flashlight size={12} className="w-[3.7cqw] h-[3.7cqw] max-lg:landscape:w-[3.4cqh] max-lg:landscape:h-[3.4cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
-        <Timer size={12} className="w-[3.7cqw] h-[3.7cqw] max-lg:landscape:w-[3.4cqh] max-lg:landscape:h-[3.4cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
-        <span className="w-[3.5cqw] h-[2.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[2.4cqh] lg:w-[0.85vw] lg:h-[0.62vw] rounded-[0.33cqw] max-lg:landscape:rounded-[0.24cqh] lg:rounded-[0.15vw] border-[0.33cqw] max-lg:landscape:border-[0.3cqh] lg:border-[0.16vw] border-current opacity-70" />
-        <FlipHorizontal2 size={12} className="w-[3.7cqw] h-[3.7cqw] max-lg:landscape:w-[3.4cqh] max-lg:landscape:h-[3.4cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/60 lg:text-white/60" />
+      <div className="flex items-center justify-center w-[12cqw] max-lg:landscape:w-[12cqh] lg:w-[55%]">
+        <FlipHorizontal2 size={12} className="w-[4.4cqw] h-[4.4cqw] max-lg:landscape:w-[3.8cqh] max-lg:landscape:h-[3.8cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/70" />
       </div>
     </div>
   </div>
@@ -263,11 +246,36 @@ const GlassReflection: React.FC = () => (
   </div>
 );
 
+// Static blurred backdrop for the hero stage. Deliberately has NO animation so the
+// browser can cache the full-screen blur instead of re-running it every frame.
+const BACKDROP_IMAGES = [
+  '/images/gallery1.jpg',
+  '/images/event1.jpg',
+  '/images/gallery2.jpg',
+  '/images/event2.jpg',
+  '/images/gallery3.jpg',
+  '/images/event3.jpg',
+  '/images/gallery4.jpg',
+  '/images/gallery1.jpg',
+];
+
+const HeroBackdrop: React.FC = () => (
+  <div className="relative w-full h-full overflow-hidden bg-[#151313]">
+    <div className="absolute inset-0 grid grid-cols-4 grid-rows-2">
+      {BACKDROP_IMAGES.map((src, i) => (
+        <img key={i} src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
+      ))}
+    </div>
+    <div className="absolute inset-0 bg-noise opacity-[0.06]" />
+    <div className="absolute inset-0 bg-gradient-to-t from-[#151313] via-[#151313]/40 to-[#151313]/70" />
+  </div>
+);
+
 export const HeroSection: React.FC = () => {
   return (
     <section className="relative w-full min-h-screen bg-[#F5F0E8] overflow-hidden pt-[84px] md:pt-[96px]">
       <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none blur-[5px] brightness-[0.55] saturate-[0.8] scale-[1.03] [container-type:size]">
-        <LandingContent />
+        <HeroBackdrop />
       </div>
       <div className="absolute inset-0 z-[1] pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(21,19,19,0.6)_100%)]" />
 
@@ -276,7 +284,7 @@ export const HeroSection: React.FC = () => {
           initial={{ opacity: 0, y: 60, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.15, ease: EASE }}
-          className="relative h-[80vh] w-auto aspect-[9/19.5] max-lg:landscape:h-[72vh] max-lg:landscape:max-w-[94vw] max-lg:landscape:aspect-[16/9.4] lg:h-auto lg:w-[84vw] lg:aspect-[16/9.4]"
+          className="relative h-[calc(100dvh-100px)] w-auto aspect-[9/19.5] max-lg:landscape:h-[calc(100dvh-92px)] max-lg:landscape:max-w-[94vw] max-lg:landscape:aspect-[16/9.4] lg:h-auto lg:w-[84vw] lg:aspect-[16/9.4]"
         >
           <div className="absolute inset-0 rounded-[16%/8%] max-lg:landscape:rounded-[3.8%/7.4%] lg:rounded-[3.8%/7.4%] bg-gradient-to-br from-[#3d3d3d] via-[#171717] to-[#343434] p-[1.05%] shadow-[0_40px_80px_-12px_rgba(0,0,0,0.65),0_120px_220px_-40px_rgba(0,0,0,0.55)]">
             <div className="absolute -top-[1.2%] left-[14%] w-[2.6%] h-[0.9%] rounded-full bg-[#262626]" />

@@ -43,24 +43,24 @@ export const ConvenerShowcase: React.FC = () => {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-charcoal/5 bg-charcoal"
             >
-              {videoFailed ? (
-                <img
-                  src={convener.photo}
-                  alt={convener.name}
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                  loading="lazy"
-                />
-              ) : (
+              {isInView && !videoFailed ? (
                 <video
                   ref={videoRef}
                   src="/videos/convener.mov"
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   muted
                   playsInline
-                  preload="auto"
+                  preload="metadata"
                   poster={convener.photo}
                   onError={() => setVideoFailed(true)}
                   onEnded={(e) => e.currentTarget.pause()}
+                />
+              ) : (
+                <img
+                  src={convener.photo}
+                  alt={convener.name}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  loading="lazy"
                 />
               )}
               {/* Vignette */}

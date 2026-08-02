@@ -67,18 +67,44 @@ export const UpdatesFeed: React.FC = () => {
               onClick={() => setSelectedEvent(post)}
               className="group bg-charcoal-dark border border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-gold/30 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] transition-all duration-500 flex flex-col h-full"
             >
-              {/* Photo Header */}
-              <div className="relative aspect-video w-full overflow-hidden bg-black flex-shrink-0">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out"
-                  loading="lazy"
-                />
-                {/* Category Badge */}
-                <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-burgundy/90 text-gold border border-gold/30 text-[9px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full shadow-lg">
-                  {getCategoryIcon(post.category)}
-                  <span>{post.category}</span>
+              {/* Photo Header — retro box TV overlay */}
+              <div className="relative aspect-video w-full overflow-hidden bg-[#1f1f1f] flex-shrink-0">
+                <div className="absolute inset-0 p-[5%] flex flex-col">
+                  {/* Antenna */}
+                  <div className="h-[18%] flex items-center justify-center gap-[4%] shrink-0">
+                    <div className="w-[2.5%] h-[85%] max-w-[6px] bg-gradient-to-b from-[#9a9a9a] to-[#565656] rounded-sm rotate-[-32deg] shadow-sm" />
+                    <div className="w-[2.5%] h-[85%] max-w-[6px] bg-gradient-to-b from-[#9a9a9a] to-[#565656] rounded-sm rotate-[32deg] shadow-sm" />
+                  </div>
+
+                  {/* CRT Screen */}
+                  <div className="relative flex-1 min-h-0 rounded-[10px] border-[3px] border-[#3a3a3a] bg-black overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out"
+                      loading="lazy"
+                    />
+                    {/* Scanlines */}
+                    <div className="absolute inset-0 pointer-events-none scanlines opacity-40" />
+                    {/* Glass reflection */}
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/15 via-transparent to-transparent" />
+                    {/* Screen curvature vignette */}
+                    <div className="absolute inset-0 pointer-events-none rounded-[7px] shadow-[inset_0_0_24px_rgba(0,0,0,0.65)]" />
+
+                    {/* Category Badge */}
+                    <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-burgundy/90 text-gold border border-gold/30 text-[9px] font-mono uppercase tracking-wider px-2 py-1 rounded-full shadow-lg z-10">
+                      {getCategoryIcon(post.category)}
+                      <span>{post.category}</span>
+                    </div>
+                  </div>
+
+                  {/* Control knobs + power LED */}
+                  <div className="h-[16%] flex items-center justify-center gap-[4%] shrink-0">
+                    <div className="w-[4%] max-w-[10px] aspect-square rounded-full bg-gradient-to-br from-[#8f8f8f] to-[#3a3a3a] border border-black/50 shadow-inner" />
+                    <div className="w-[4%] max-w-[10px] aspect-square rounded-full bg-gradient-to-br from-[#8f8f8f] to-[#3a3a3a] border border-black/50 shadow-inner" />
+                    <div className="w-[4%] max-w-[10px] aspect-square rounded-full bg-gradient-to-br from-[#8f8f8f] to-[#3a3a3a] border border-black/50 shadow-inner" />
+                    <div className="w-[5%] max-w-[10px] aspect-square rounded-full bg-red-500/90 shadow-[0_0_6px_rgba(255,40,40,0.9)]" />
+                  </div>
                 </div>
               </div>
 
@@ -176,6 +202,23 @@ export const UpdatesFeed: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
+
+      <style>{`
+        .scanlines {
+          background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0) 0px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0.32) 2px,
+            rgba(0, 0, 0, 0.32) 3px
+          );
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .scanlines {
+            background-size: 100% 3px;
+          }
+        }
+      `}</style>
     </section>
   );
 };

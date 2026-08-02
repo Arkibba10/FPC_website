@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Facebook, Linkedin, Instagram, Mail, Quote } from 'lucide-react';
 import { Member } from '../types';
@@ -156,21 +156,38 @@ const MemberCard: React.FC<{ member: Member; index: number }> = ({ member, index
 
 export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) => {
   const targetRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
 
   const sorted = [...members].sort(
     (a, b) => roleRank(a.position) - roleRank(b.position) || a.order - b.order
   );
   const total = sorted.length;
 
+  // Measure the real horizontal travel distance so every card is fully reachable,
+  // regardless of how card widths vary (names, bios, portraits).
+  useEffect(() => {
+    const measure = () => {
+      if (!trackRef.current || !targetRef.current) return;
+      const trackWidth = trackRef.current.scrollWidth;
+      const containerWidth = targetRef.current.clientWidth;
+      setOffset(Math.max(0, trackWidth - containerWidth));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    const ro = new ResizeObserver(measure);
+    if (trackRef.current) ro.observe(trackRef.current);
+    return () => {
+      window.removeEventListener('resize', measure);
+      ro.disconnect();
+    };
+  }, [members]);
+
   // Track scroll progress of the pinned container
   const { scrollYProgress } = useScroll({ target: targetRef });
 
-  // Map scroll progress to horizontal translation (page stays pinned)
-  const x = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ['0%', total > 1 ? `-${((total - 1) / total) * 100}%` : '0%']
-  );
+  // Map scroll progress to the measured horizontal translation (page stays pinned)
+  const x = useTransform(scrollYProgress, (p) => (total > 1 ? -offset * p : 0));
 
   return (
     <section
@@ -203,7 +220,7 @@ export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) =
 
         {/* Horizontal moving members track */}
         <div className="relative flex-1 flex items-center z-20">
-          <motion.div style={{ x }} className="flex items-center gap-12 px-6 md:px-12 w-max">
+          <motion.div ref={trackRef} style={{ x }} className="flex items-center gap-12 px-6 md:px-12 w-max will-change-transform">
             {sorted.map((member, i) => (
               <MemberCard key={member.id} member={member} index={i} />
             ))}

@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
-const DUST_COUNT = 34;
+const DUST_COUNT =
+  typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches ? 18 : 34;
 
 const seededRng = (seed: number) => {
   let a = seed;
