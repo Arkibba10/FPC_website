@@ -4,6 +4,7 @@ import { ClubProvider } from './context/ClubContext';
 import { useClub } from './context/useClub';
 import { FilmGrain } from './components/FilmGrain';
 import FloatingDust from './components/FloatingDust';
+import { TopoBackdrop } from './components/TopoBackdrop';
 import { FilmstripLoader } from './components/FilmstripLoader';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
@@ -17,6 +18,8 @@ import { UpdatesFeed } from './components/UpdatesFeed';
 import { SocialHub } from './components/SocialHub';
 import { Footer } from './components/Footer';
 import { AdminDashboard } from './components/AdminDashboard';
+import { SectionDivider, SectionMotion } from './components/SectionTransitions';
+import { MarqueeTape } from './components/MarqueeTape';
 
 // Animated Elements
 import { Polaroid } from './components/animated/Polaroid';
@@ -42,6 +45,9 @@ const AppContent: React.FC = () => {
 
           {/* Site-wide ambient dust floating up & dissolving */}
           <FloatingDust />
+
+          {/* Site-wide topographic scribbles behind all content */}
+          <TopoBackdrop />
 
           {/* Editorial Navigation Header */}
           <Header
@@ -72,67 +78,96 @@ const AppContent: React.FC = () => {
                 transition={{ duration: 0.45, ease: EASE }}
               >
                 {/* Section 1: Hero — cinematic "looking through a camera" landing */}
+                <SectionDivider variant="double" />
                 <div id="hero" className="relative">
-                  <HeroSection />
+                  <SectionMotion>
+                    <HeroSection />
+                  </SectionMotion>
                 </div>
 
-              {/* Section 2: Fullscreen Motto Manifesto */}
-              <div id="manifesto">
-                <MottoSection />
-              </div>
+                {/* Constant rolling film-tape marquee — border between landing & manifesto */}
+                <MarqueeTape />
 
-              {/* Section 3: Cinematic Movie-Poster Timeline */}
-              <div id="timeline" className="relative bg-beige">
-                <Timeline events={events} />
-                
-                {/* Clapperboard floating decorative element */}
-                <div className="absolute right-12 top-24 z-20 hidden md:block">
-                  <Clapperboard size={70} />
+                {/* Section 2: Fullscreen Motto Manifesto */}
+                <div id="manifesto">
+                  <SectionMotion>
+                    <MottoSection />
+                  </SectionMotion>
                 </div>
-              </div>
 
-              {/* Section 4: Live Bulletins, Celebrations, & Highlights */}
-              <div id="updates">
-                <UpdatesFeed />
-              </div>
+                {/* Section 3: Cinematic Movie-Poster Timeline */}
+                <SectionDivider variant="perf" />
+                <div id="timeline" className="relative bg-beige">
+                  <SectionMotion>
+                    <Timeline events={events} />
 
-              {/* Section 5: Members Spotlight Reveal */}
-              <div id="members" className="relative bg-beige">
-                <SpotlightMembers members={members} />
-              </div>
-
-              {/* Section 6: Prestigious Convener Showcase */}
-              <div id="convener" className="relative">
-                <ConvenerShowcase />
-
-                {/* Floating Polaroid of a vintage camera near convener */}
-                <div className="absolute right-12 bottom-12 z-20 hidden lg:block">
-                  <Polaroid
-                    image="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&q=80&w=300"
-                    caption="Analog Soul // FPC"
-                    rotate={-5}
-                    width={140}
-                  />
+                    {/* Clapperboard floating decorative element */}
+                    <div className="absolute right-12 top-24 z-20 hidden md:block">
+                      <Clapperboard size={70} />
+                    </div>
+                  </SectionMotion>
                 </div>
-              </div>
 
-              {/* Section 7: Pinned Horizontal Gallery */}
-              <div id="gallery">
-                <HorizontalGallery gallery={gallery} />
-              </div>
+                {/* Section 4: Live Bulletins, Celebrations, & Highlights */}
+                <SectionDivider variant="grain" />
+                <div id="updates">
+                  <SectionMotion>
+                    <UpdatesFeed />
+                  </SectionMotion>
+                </div>
 
-              {/* Section 8: Infinite Alumni Carousels */}
-              <div id="alumni">
-                <AlumniCarousels alumni={alumni} />
-              </div>
+                {/* Section 5: Prestigious Convener Showcase */}
+                <SectionDivider variant="stars" />
+                <div id="convener" className="relative">
+                  <SectionMotion>
+                    <ConvenerShowcase />
 
-              {/* Section 9: Connect & Social Hub */}
-              <div id="socials">
-                <SocialHub />
-              </div>
+                    {/* Floating Polaroid of a vintage camera near convener */}
+                    <div className="absolute right-12 bottom-12 z-20 hidden lg:block">
+                      <Polaroid
+                        image="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&q=80&w=300"
+                        caption="Analog Soul // FPC"
+                        rotate={-5}
+                        width={140}
+                      />
+                    </div>
+                  </SectionMotion>
+                </div>
 
-              {/* Section 10: Premium Footer */}
-              <Footer />
+                {/* Section 6: Members Spotlight Circular Carousel */}
+                <SectionDivider variant="angle" />
+                <div id="members" className="relative bg-beige">
+                  <SectionMotion>
+                    <SpotlightMembers members={members} />
+                  </SectionMotion>
+                </div>
+
+                {/* Section 7: Pinned Horizontal Gallery */}
+                <SectionDivider variant="film" />
+                <div id="gallery">
+                  <SectionMotion>
+                    <HorizontalGallery gallery={gallery} />
+                  </SectionMotion>
+                </div>
+
+                {/* Section 8: Infinite Alumni Carousels */}
+                <SectionDivider variant="perf" />
+                <div id="alumni">
+                  <SectionMotion>
+                    <AlumniCarousels alumni={alumni} />
+                  </SectionMotion>
+                </div>
+
+                {/* Section 9: Connect & Social Hub */}
+                <SectionDivider variant="grain" />
+                <div id="socials">
+                  <SectionMotion>
+                    <SocialHub />
+                  </SectionMotion>
+                </div>
+
+                {/* Section 10: Premium Footer */}
+                <Footer />
               </motion.div>
             )}
           </AnimatePresence>

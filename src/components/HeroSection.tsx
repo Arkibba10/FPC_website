@@ -128,16 +128,6 @@ const LandingContent: React.FC = () => {
     ))}
 
     <div className="absolute left-1/2 -translate-x-1/2 top-[31%] w-[88%] max-lg:landscape:top-[33%] max-lg:landscape:w-[84%] lg:top-[41%] lg:w-[56%] flex flex-col items-center text-center z-10 select-none">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 0.35, ease: EASE }}
-        className="flex items-center justify-center gap-[1.8cqw] max-lg:landscape:gap-[1.5cqh] lg:gap-[0.9vw]"
-      >
-        <span className="w-[4cqw] h-[0.55cqw] max-lg:landscape:w-[3cqh] max-lg:landscape:h-[0.45cqh] lg:w-[1.8vw] lg:h-[0.26vw] bg-[#641C2B] rounded-full" />
-        <span className="font-mono text-[2.6cqw] max-lg:landscape:text-[2cqh] lg:text-[0.85vw] tracking-[0.35em] uppercase text-[#641C2B]">CSE — UAP</span>
-      </motion.div>
-
       <div className="relative mt-[3cqw] max-lg:landscape:mt-[1.6cqh] lg:mt-[1.3vw]">
         {FOCUS_POSITIONS.map((pos, i) => (
           <span
@@ -151,7 +141,7 @@ const LandingContent: React.FC = () => {
           transition={{ duration: 1, delay: 0.45, ease: EASE }}
           className="leading-[1.05]"
         >
-        <span className="block font-medium text-[2.8cqw] max-lg:landscape:text-[2.4cqh] lg:text-[1.15vw] tracking-[0.42em] pl-[0.42em] text-[#641C2B]" style={{ fontFamily: "'Poppins', sans-serif" }}>FILM &amp;</span>
+        <span className="block font-medium text-[5.2cqw] max-lg:landscape:text-[3.8cqh] lg:text-[2vw] tracking-[0.42em] pl-[0.42em] text-[#641C2B]" style={{ fontFamily: "'Poppins', sans-serif" }}>FILM &amp;</span>
         <span className="mt-[1.4cqw] max-lg:landscape:mt-[0.8cqh] lg:mt-[0.7vw] block font-black text-[8.6cqw] max-lg:landscape:text-[7cqh] lg:text-[4.8vw] tracking-[-0.045em] leading-[1.02] text-[#151313]" style={{ fontFamily: "'Poppins', sans-serif" }}>PHOTOGRAPHY</span>
         <span className="mt-[1.6cqw] max-lg:landscape:mt-[1cqh] lg:mt-[0.8vw] block font-medium text-[3cqw] max-lg:landscape:text-[2.4cqh] lg:text-[1.25vw] tracking-[0.55em] pl-[0.55em] text-[#641C2B]" style={{ fontFamily: "'Poppins', sans-serif" }}>CLUB</span>
       </motion.h1>
@@ -211,13 +201,6 @@ const CameraUI: React.FC = () => (
         </span>
         <Timer size={12} className="w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] text-[#151313]/70" />
       </div>
-    </div>
-
-    <div className="absolute left-[45%] top-[15%] w-[14cqw] h-[14cqw] max-lg:landscape:top-[16%] max-lg:landscape:w-[9.5cqh] max-lg:landscape:h-[9.5cqh] lg:top-[25%] lg:w-[6vw] lg:h-[6vw]">
-      <span className="absolute top-0 left-0 w-[3cqw] h-[3cqw] border-t-[0.55cqw] border-l-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-t-[0.32cqh] max-lg:landscape:border-l-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 rounded-tl-[0.3vw]" />
-      <span className="absolute top-0 right-0 w-[3cqw] h-[3cqw] border-t-[0.55cqw] border-r-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-t-[0.32cqh] max-lg:landscape:border-r-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-t-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 rounded-tr-[0.3vw]" />
-      <span className="absolute bottom-0 left-0 w-[3cqw] h-[3cqw] border-b-[0.55cqw] border-l-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-b-[0.32cqh] max-lg:landscape:border-l-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-l-[0.2vw] border-[#151313]/70 rounded-bl-[0.3vw]" />
-      <span className="absolute bottom-0 right-0 w-[3cqw] h-[3cqw] border-b-[0.55cqw] border-r-[0.55cqw] max-lg:landscape:w-[1.7cqh] max-lg:landscape:h-[1.7cqh] max-lg:landscape:border-b-[0.32cqh] max-lg:landscape:border-r-[0.32cqh] lg:w-[1vw] lg:h-[1vw] lg:border-b-[0.2vw] lg:border-r-[0.2vw] border-[#151313]/70 rounded-br-[0.3vw]" />
     </div>
 
     <div className="absolute inset-x-0 bottom-[17%] flex justify-center max-lg:landscape:inset-x-auto max-lg:landscape:bottom-auto max-lg:landscape:top-1/2 max-lg:landscape:-translate-y-1/2 max-lg:landscape:right-[13.5%] lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:right-[12.5%]">
@@ -287,6 +270,7 @@ export const HeroSection: React.FC = () => {
         <HeroBackdrop />
       </div>
       <div className="absolute inset-0 z-[1] pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(21,19,19,0.6)_100%)]" />
+
 
       <div className="relative z-20 flex flex-1 items-center justify-center w-full min-h-[calc(100vh-84px)] md:min-h-[calc(100vh-96px)] pb-[3vh]">
         <motion.div

@@ -30,7 +30,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
   return (
     <section ref={targetRef} className="relative h-[300vh] bg-beige">
       {/* Sticky container that stays in viewport */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden py-12 relative">
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden py-12 relative z-10">
 
         {/* Scroll-movable film reels */}
         <motion.div style={{ y: reelY }} className="absolute left-3 md:left-8 top-16 z-10 opacity-30 pointer-events-none will-change-transform">
@@ -67,7 +67,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
             </div>
 
             {/* Card row */}
-            <div className="flex gap-8 px-6 md:px-12 py-3">
+            <div className="relative z-10 flex gap-8 px-6 md:px-12 py-3">
               {gallery.map((item) => {
                 return (
                   <div

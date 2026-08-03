@@ -57,7 +57,7 @@ export const ConvenerShowcase: React.FC = () => {
                 />
               ) : (
                 <img
-                  src={convener.photo}
+                  src="/images/convener-last-frame.jpg"
                   alt={convener.name}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   loading="lazy"

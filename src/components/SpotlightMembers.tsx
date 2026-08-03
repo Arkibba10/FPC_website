@@ -1,16 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  animate,
-  motion,
-  MotionValue,
-  useInView,
-  useMotionValue,
-  useMotionValueEvent,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
-import { Facebook, Linkedin, Instagram, Mail, Quote } from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
+import { Facebook, Linkedin, Instagram, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Member } from '../types';
 
 interface SpotlightMembersProps {
@@ -30,6 +20,7 @@ const ROLES = [
   'head of photography',
   'head of videography',
   'web master',
+  'organizing secretary',
   'executive member',
   'member',
 ];
@@ -40,346 +31,355 @@ const roleRank = (position: string) => {
   return idx === -1 ? ROLES.length + 100 : idx;
 };
 
-const CARD_WIDTH = 260;
-const CARD_HEIGHT = 520;
-const CARD_RADIUS = 36;
-const SLOT_SPACING = 80;
-const SLOT_ROTATION = 9;
-const FLOAT_MS = 7000;
-const FLOAT_AMPLITUDE = 6;
-const MAX_TILT = 8;
-const PERSPECTIVE = 1800;
-const HOVER_SCALE = 1.04;
-const HOVER_ROTATE_KEEP = 0.15;
-const CASCADE_Y = 16;
-const ROTATION_FULL = 0.85;
-const BACK_SCALE = 0.045;
-const FINAL_FADE = 0.35;
-const REVEAL_SCALE = 0.88;
-const PAGE_MARGIN = 36;
-const CAPTION_RESERVE = 150;
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-interface TierConfig {
-  half: number;
-  spacing: number;
-  rotation: number;
-  cardW: number;
-  cardH: number;
-  captionScale: number;
-  fadeStart: number;
-  fadeEnd: number;
-}
-
-const TIERS: { name: 'mobile' | 'tablet' | 'desktop'; query: string; cfg: TierConfig }[] = [
-  { name: 'mobile', query: '(max-width: 639px)', cfg: { half: 1, spacing: 0.62, rotation: 0.55, cardW: 205, cardH: 400, captionScale: 0.8, fadeStart: 1.35, fadeEnd: 2.35 } },
-  { name: 'tablet', query: '(min-width: 640px) and (max-width: 1023px)', cfg: { half: 1.5, spacing: 0.85, rotation: 0.8, cardW: 240, cardH: 470, captionScale: 0.9, fadeStart: 1.5, fadeEnd: 2.5 } },
-  { name: 'desktop', query: '(min-width: 1024px)', cfg: { half: 2, spacing: 1, rotation: 1, cardW: CARD_WIDTH, cardH: CARD_HEIGHT, captionScale: 1, fadeStart: 2.5, fadeEnd: 4.2 } },
+const DUST_PARTICLES = [
+  { left: '8%', size: 2, dur: 9, delay: 0 },
+  { left: '18%', size: 1.5, dur: 12, delay: 3 },
+  { left: '30%', size: 1.5, dur: 8, delay: 1.5 },
+  { left: '42%', size: 2, dur: 11, delay: 5 },
+  { left: '55%', size: 1.5, dur: 9, delay: 2 },
+  { left: '66%', size: 2, dur: 13, delay: 0.5 },
+  { left: '76%', size: 1.5, dur: 10, delay: 6 },
+  { left: '86%', size: 2, dur: 8.5, delay: 4 },
+  { left: '94%', size: 1.5, dur: 12, delay: 7 },
+  { left: '50%', size: 1.5, dur: 10.5, delay: 2.5 },
 ];
 
-const hierarchyPhase = (i: number): number => {
-  if (i === 0) return 0;
-  const slot = Math.ceil(i / 2);
-  return (i % 2 === 1 ? 1 : -1) * slot;
-};
+const SPRING = { type: 'spring', stiffness: 190, damping: 27, mass: 0.9 } as const;
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-const cardOpacity = (r: number, half: number, fadeStart: number, fadeEnd: number, fadeAmount: number) => {
-  const d = Math.abs(r);
-  const base = 1 - Math.min(d, half) * 0.05;
-  if (d <= fadeStart) return base;
-  const t = (d - fadeStart) / Math.max(0.0001, fadeEnd - fadeStart);
-  const fade = Math.max(0, 1 - t);
-  return base * (1 + (fade - 1) * fadeAmount);
-};
-
-interface FanCardProps {
-  member: Member;
-  phase: number;
-  spread: MotionValue<number>;
-  reveal: MotionValue<number>;
-  cfg: TierConfig;
-  fadeStart: number;
-  fadeEnd: number;
-  reduced: boolean;
-  inView: boolean;
-}
-
-const FanCard: React.FC<FanCardProps> = ({
-  member,
-  phase: phaseNum,
-  spread,
-  reveal,
-  cfg,
-  fadeStart,
-  fadeEnd,
-  reduced,
-  inView,
-}) => {
-  const hoverFactor = useMotionValue(0);
-  const phase = useMotionValue(phaseNum);
-  const depth = useTransform(phase, (p) => 100 - Math.min(Math.abs(p), cfg.half + 1) * 24);
-  const x = useTransform([phase, spread, reveal], (latest: number[]) => latest[0] * SLOT_SPACING * cfg.spacing * latest[1] * latest[2]);
-  const yOff = useTransform([phase, reveal], (latest: number[]) => -Math.abs(latest[0]) * CASCADE_Y * latest[1]);
-  const rotate = useTransform([phase, reveal, hoverFactor], (latest: number[]) => {
-    const [p, r, h] = latest;
-    return -p * SLOT_ROTATION * cfg.rotation * ROTATION_FULL * r * (1 - (1 - HOVER_ROTATE_KEEP) * h);
-  });
-  const scale = useTransform([phase, reveal, hoverFactor], (latest: number[]) => {
-    const [p, r, h] = latest;
-    return (1 - Math.min(Math.abs(p), cfg.half + 0.5) * BACK_SCALE) * (REVEAL_SCALE + (1 - REVEAL_SCALE) * r) * (1 + (HOVER_SCALE - 1) * h);
-  });
-  const opacity = useTransform([phase, reveal], (latest: number[]) =>
-    cardOpacity(latest[0], cfg.half, fadeStart, fadeEnd, FINAL_FADE) * latest[1]
-  );
-  const zIndex = useTransform(phase, (p) => Math.max(1, 100 - Math.min(Math.abs(p), cfg.half + 1) * 12));
-  const capOpacity = useTransform([phase, reveal], (latest: number[]) => {
-    const [p, r] = latest;
-    const center = Math.abs(p) <= 0.5 ? 1 : 0;
-    if (r >= 0.6) return 1;
-    return Math.max(center, r > 0.45 ? (r - 0.45) / 0.15 : 0);
-  });
-  const socialOpacity = useTransform(phase, (p) => (Math.abs(p) <= 0.5 ? 1 : 0));
-
+const useViewportWidth = () => {
+  const [vw, setVw] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1280));
   useEffect(() => {
-    if (!inView) return;
-    if (reduced) {
-      reveal.set(1);
-      return;
-    }
-    const delay = 0.15 + Math.abs(phaseNum) * 0.12;
-    const controls = animate(reveal, 1, { delay, duration: 1, ease: EASE });
-    return () => controls.stop();
-  }, [inView, reduced, reveal, phaseNum]);
+    const onResize = () => setVw(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return vw;
+};
 
-  const [canHover, setCanHover] = useState(cardOpacity(Math.abs(phaseNum), cfg.half, fadeStart, fadeEnd, FINAL_FADE) * reveal.get() > 0.15);
-  const canHoverRef = useRef(canHover);
-  const showSocials = Math.abs(phaseNum) <= 0.5;
-  const canInteract = useTransform([phase, reveal], (latest: number[]) =>
-    cardOpacity(latest[0], cfg.half, fadeStart, fadeEnd, FINAL_FADE) * latest[1] > 0.15
-  );
-  useMotionValueEvent(canInteract, 'change', (v) => {
-    if (v !== canHoverRef.current) {
-      canHoverRef.current = v;
-      setCanHover(v);
-    }
-  });
+const CardSquare: React.FC<{ member: Member; className?: string }> = ({ member, className }) => (
+  <div className={`relative overflow-hidden rounded-2xl border border-charcoal/10 bg-charcoal shadow-[0_18px_40px_-24px_rgba(42,42,42,0.5)] ${className ?? ''}`}>
+    <img
+      src={member.photo}
+      alt={member.name}
+      loading="lazy"
+      draggable={false}
+      className="vintage absolute inset-0 h-full w-full object-cover object-center"
+    />
+    <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-overlay" />
+    <div className="card-vignette pointer-events-none absolute inset-0" />
+    <span className="pointer-events-none absolute left-3 top-3 font-mono text-[9px] uppercase tracking-[0.3em] text-white/70 mix-blend-difference">
+      {member.order.toString().padStart(2, '0')}
+    </span>
+  </div>
+);
 
-  const startHover = () => {
-    animate(hoverFactor, 1, { type: 'spring', stiffness: 300, damping: 22 });
-  };
-  const endHover = () => {
-    animate(hoverFactor, 0, { type: 'spring', stiffness: 220, damping: 24 });
-  };
+const Nameplate: React.FC<{ member: Member }> = ({ member }) => {
+  const icons = [
+    { key: 'instagram', show: !!member.instagram, icon: Instagram, href: member.instagram, label: 'Instagram' },
+    { key: 'facebook', show: !!member.facebook, icon: Facebook, href: member.facebook, label: 'Facebook' },
+    { key: 'linkedin', show: !!member.linkedin, icon: Linkedin, href: member.linkedin, label: 'LinkedIn' },
+    { key: 'mail', show: !!member.email, icon: Mail, href: `mailto:${member.email}`, label: 'Email' },
+  ].filter((i) => i.show);
 
   return (
-    <motion.div
-      className="absolute top-0 will-change-transform"
-      style={{ width: cfg.cardW, height: cfg.cardH, left: '50%', marginLeft: -cfg.cardW / 2, transformStyle: 'preserve-3d' }}
-      animate={reduced ? { y: 0 } : { y: [FLOAT_AMPLITUDE, -FLOAT_AMPLITUDE] }}
-      transition={
-        reduced
-          ? undefined
-          : { duration: FLOAT_MS / 1000, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: (Math.abs(phaseNum) % 5) * 0.55 }
-      }
-    >
-      <div className="will-change-transform" style={{ transformStyle: 'preserve-3d' }}>
-        <motion.div
-          className="relative will-change-transform cursor-pointer"
-          style={{ x, y: yOff, rotate, scale, zIndex, opacity, z: depth, transformStyle: 'preserve-3d', pointerEvents: canHover ? 'auto' : 'none' }}
-          onHoverStart={startHover}
-          onHoverEnd={endHover}
-        >
-          <div className="relative overflow-hidden bg-charcoal" style={{ width: cfg.cardW, height: cfg.cardH, borderRadius: CARD_RADIUS }}>
-            <img src={member.photo} alt={member.name} loading="lazy" draggable={false} className="w-full h-full object-cover" />
-          </div>
-
-          <motion.div
-            className="absolute left-1/2 -translate-x-1/2 text-center"
-            style={{ top: cfg.cardH + 20, width: cfg.cardW + 90, opacity: capOpacity }}
-          >
-            <h3 className="font-playfair font-bold text-charcoal leading-tight" style={{ fontSize: Math.round(22 * cfg.captionScale) }}>
-              {member.name}
-            </h3>
-            <p className="font-mono text-burgundy uppercase tracking-widest mt-1" style={{ fontSize: Math.round(11 * cfg.captionScale) }}>
-              {member.position}
-            </p>
-            {member.quote && (
-              <p className="font-playfair italic text-charcoal/80 mt-2 leading-relaxed" style={{ fontSize: Math.round(14 * cfg.captionScale) }}>
-                <Quote size={12} className="inline text-gold/70 mr-1" />
-                {member.quote}
-              </p>
-            )}
-            <motion.div className="flex items-center justify-center gap-2 mt-3" style={{ opacity: socialOpacity, pointerEvents: showSocials ? 'auto' : 'none' }}>
-              {member.email && (
-                <a
-                  href={`mailto:${member.email}`}
-                  aria-label={`Email ${member.name}`}
-                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
-                >
-                  <Mail size={14} />
-                </a>
-              )}
-              {member.facebook && (
-                <a
-                  href={member.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${member.name} on Facebook`}
-                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
-                >
-                  <Facebook size={14} />
-                </a>
-              )}
-              {member.linkedin && (
-                <a
-                  href={member.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${member.name} on LinkedIn`}
-                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
-                >
-                  <Linkedin size={14} />
-                </a>
-              )}
-              {member.instagram && (
-                <a
-                  href={member.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${member.name} on Instagram`}
-                  className="p-2 rounded-full bg-white/60 text-charcoal/70 border border-charcoal/15 hover:bg-burgundy hover:text-gold hover:border-burgundy hover:scale-110 transition-all"
-                >
-                  <Instagram size={14} />
-                </a>
-              )}
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </div>
-    </motion.div>
+    <div className="rounded-xl border border-white/50 bg-white/40 px-3 py-2 shadow-[0_10px_30px_-12px_rgba(42,42,42,0.35)] backdrop-blur-md">
+      <p className="truncate font-sans text-[13px] font-bold leading-tight text-charcoal">{member.name}</p>
+      <p className="mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.18em] text-burgundy">{member.position}</p>
+      {icons.length > 0 && (
+        <div className="mt-2 flex items-center gap-1.5">
+          {icons.map(({ key, icon: Icon, href, label }) => (
+            <a
+              key={key}
+              href={href}
+              target={key === 'mail' ? undefined : '_blank'}
+              rel={key === 'mail' ? undefined : 'noopener noreferrer'}
+              aria-label={`${member.name} on ${label}`}
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-charcoal/[0.06] text-charcoal/60 transition-colors duration-300 hover:bg-burgundy hover:text-gold"
+            >
+              <Icon size={10} />
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
   );
+};
+
+const useReducedMotion = () => {
+  const [reduced, setReduced] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handler = () => setReduced(mq.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return reduced;
 };
 
 export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const tiltAreaRef = useRef<HTMLDivElement>(null);
-  const reduced = !!useReducedMotion();
-  const inView = useInView(sectionRef, { once: true, amount: 0.2 });
-  const [tierName, setTierName] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+  const reduced = useReducedMotion();
+  const vw = useViewportWidth();
 
   const sorted = useMemo(
     () => [...members].sort((a, b) => roleRank(a.position) - roleRank(b.position) || a.order - b.order),
     [members]
   );
-  const total = sorted.length;
+  const n = sorted.length;
 
-  const reveal = useMotionValue(0);
-  const fullSpreadMV = useMotionValue(1);
-  const rotY = useMotionValue(0);
-  const rotX = useMotionValue(0);
-  const tiltRY = useSpring(rotY, { stiffness: 120, damping: 18, mass: 0.5 });
-  const tiltRX = useSpring(rotX, { stiffness: 120, damping: 18, mass: 0.5 });
+  const card = Math.round(Math.min(Math.max(176, vw * 0.27), 330));
+  const cardH = Math.round(card * 1.5);
+  const spacing1 = Math.min(card * 0.58, vw * 0.2);
+  const spacing2 = Math.min(card * 1.02, vw * 0.34);
+  const maxPeek = vw < 640 ? 1 : 2;
+  const stageH = cardH + 104;
 
-  const cfg = TIERS.find((t) => t.name === tierName)!.cfg;
-  const fadeEnd = Math.min(Math.max(cfg.fadeEnd, total / 2 - 0.5), total / 2 + 0.6);
-  const fadeStart = Math.min(cfg.fadeStart, fadeEnd);
-  const maxOffset = Math.floor(total / 2);
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
 
+  /* Constant auto-advancing circular loop — paused while the stage is hovered. */
   useEffect(() => {
-    const mqs = TIERS.map((t) => ({ name: t.name, mq: window.matchMedia(t.query) }));
-    const apply = () => {
-      for (const { name, mq } of mqs) {
-        if (mq.matches) {
-          setTierName(name);
-          return;
-        }
-      }
-    };
-    apply();
-    mqs.forEach(({ mq }) => mq.addEventListener('change', apply));
-    return () => mqs.forEach(({ mq }) => mq.removeEventListener('change', apply));
-  }, []);
+    if (reduced || paused || n === 0) return;
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % n), 4200);
+    return () => window.clearInterval(id);
+  }, [reduced, paused, n]);
 
-  useEffect(() => {
-    if (maxOffset === 0) return;
-    const compute = () => {
-      const base = SLOT_SPACING * cfg.spacing;
-      const vw = window.innerWidth;
-      const target = Math.max(0.05, (vw / 2 - cfg.cardW / 2 - PAGE_MARGIN) / (maxOffset * base));
-      fullSpreadMV.set(target);
-    };
-    compute();
-    window.addEventListener('resize', compute);
-    return () => window.removeEventListener('resize', compute);
-  }, [cfg, maxOffset, fullSpreadMV]);
+  const goPrev = () => setIndex((i) => (i - 1 + n) % n);
+  const goNext = () => setIndex((i) => (i + 1) % n);
 
-  const handleTiltMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = tiltAreaRef.current?.getBoundingClientRect();
-    if (!rect || rect.width === 0 || rect.height === 0) return;
-    const nx = Math.max(-0.5, Math.min(0.5, (e.clientX - rect.left) / rect.width - 0.5));
-    const ny = Math.max(-0.5, Math.min(0.5, (e.clientY - rect.top) / rect.height - 0.5));
-    rotY.set(-nx * MAX_TILT * 2);
-    rotX.set(ny * MAX_TILT * 2);
+  const offsetOf = (i: number) => {
+    const offset = ((i - index) % n + n) % n;
+    return offset > n / 2 ? offset - n : offset;
   };
 
-  const handleTiltLeave = () => {
-    rotX.set(0);
-    rotY.set(0);
-  };
+  const navBtnClass =
+    'z-40 flex h-11 w-11 items-center justify-center rounded-full border border-burgundy/40 text-burgundy transition-all duration-300 hover:bg-burgundy hover:text-gold hover:shadow-[0_10px_26px_-10px_rgba(110,30,42,0.7)] active:scale-90';
 
-  if (total === 0) return null;
+  /* Reduced motion: plain static grid. */
+  if (reduced) {
+    return (
+      <section className="relative overflow-hidden bg-white" aria-label="Executive Members">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-white" />
+          <div className="bg-paperish absolute inset-0" />
+          <div className="absolute inset-0 bg-[radial-gradient(110%_80%_at_18%_-10%,rgba(110,30,42,0.05),transparent_55%)]" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-6xl px-6 pb-24 pt-16 md:pt-24">
+          <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-charcoal/45">FPC · CSE-UAP — Executive Board</p>
+          <h2 className="mt-4 text-4xl font-playfair font-bold text-charcoal leading-tight md:text-5xl lg:text-6xl">
+            Executive Members
+          </h2>
+          <div className="mt-10 h-px w-24 bg-burgundy/40" />
+          <div className="mt-14 columns-1 gap-6 sm:columns-2 xl:columns-3">
+            {sorted.map((member) => (
+              <div key={member.id} className="mb-10 break-inside-avoid">
+                <CardSquare member={member} className="aspect-[2/3] w-full" />
+                <div className="mt-3">
+                  <Nameplate member={member} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <CarouselStyles />
+      </section>
+    );
+  }
 
   return (
-    <section ref={sectionRef} className="relative bg-beige overflow-hidden py-20 md:py-28">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gold/5 rounded-full blur-[150px] pointer-events-none" />
-
-      <div className="relative z-10 mb-10 md:mb-14 px-6 text-center">
-        <span className="text-burgundy font-mono uppercase tracking-widest text-xs block mb-3">Behind the Lenses</span>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-charcoal leading-tight">
-          Executive <span className="italic text-burgundy font-normal">Members</span>
-        </h2>
+    <section ref={sectionRef} className="relative overflow-hidden bg-white" aria-label="Executive Members">
+      {/* Layered background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-white" />
+        <div className="bg-paperish absolute inset-0" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-white to-[#fbf7f2]" />
+        <div className="absolute inset-0 bg-[radial-gradient(110%_80%_at_18%_-10%,rgba(110,30,42,0.05),transparent_55%)]" />
+        {DUST_PARTICLES.map((d, i) => (
+          <span
+            key={i}
+            className="dust"
+            style={{ left: d.left, width: d.size, height: d.size, animationDuration: `${d.dur}s`, animationDelay: `${d.delay}s` }}
+          />
+        ))}
       </div>
 
+      {/* Editorial heading */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-16 md:pt-24">
+        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-charcoal/45">FPC · CSE-UAP — Executive Board</p>
+        <h2 className="mt-4 text-4xl font-playfair font-bold text-charcoal leading-tight md:text-5xl lg:text-6xl">
+          Executive Members
+        </h2>
+        <div className="mt-10 h-px w-24 bg-burgundy/40" />
+
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 font-mono text-[9.5px] uppercase tracking-[0.3em] text-charcoal/45">
+          <span className="hidden sm:inline">Auto-playing circular gallery — hover to pause · drag or use the arrows to browse</span>
+          <span className="sm:hidden">Circular gallery — use the arrows to browse</span>
+          <span className="tabular-nums">
+            {String(index + 1).padStart(2, '0')} — {String(n).padStart(2, '0')}
+          </span>
+        </div>
+      </div>
+
+      {/* Circular carousel stage */}
       <div
-        ref={tiltAreaRef}
-        className="relative z-10 w-full max-w-4xl mx-auto"
-        style={{ perspective: PERSPECTIVE }}
-        onMouseMove={reduced ? undefined : handleTiltMove}
-        onMouseLeave={reduced ? undefined : handleTiltLeave}
+        ref={stageRef}
+        className="relative z-10 mx-auto w-full px-4 pt-8 pb-8 sm:px-10"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
       >
-        <motion.div
-          className="relative flex items-start justify-center"
-          style={{ rotateX: tiltRX, rotateY: tiltRY, transformStyle: 'preserve-3d' }}
-        >
+        {/* Transparent cutout camcorder — left of the carousel */}
+        <div className="pointer-events-none select-none absolute left-[-14vw] top-[42%] z-20 hidden -translate-y-1/2 lg:block lg:w-[42vw]">
+          <motion.img
+            src="/images/camcorder.png"
+            alt=""
+            draggable={false}
+            initial={{ opacity: 0, y: 28 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+            transition={{ duration: 1.1, delay: 0.6, ease: EASE }}
+            className="relative w-full blur-[2px]"
+          />
           <div
-            className="relative"
+            className="absolute inset-0 bg-gradient-to-t from-[#6E1E2A]/70 via-transparent to-transparent"
             style={{
-              width: cfg.cardW,
-              height: cfg.cardH + Math.round(CAPTION_RESERVE * cfg.captionScale),
-              transformStyle: 'preserve-3d',
+              WebkitMaskImage: 'url(/images/camcorder.png)',
+              maskImage: 'url(/images/camcorder.png)',
+              WebkitMaskSize: '100% 100%',
+              maskSize: '100% 100%',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
             }}
-          >
+          />
+        </div>
+
+        {/* Transparent cutout camera — right of the carousel */}
+        <div className="pointer-events-none select-none absolute right-[-11vw] top-[34%] z-20 hidden -translate-y-1/2 lg:block lg:w-[34vw]">
+          <motion.img
+            src="/images/camera.png"
+            alt=""
+            draggable={false}
+            initial={{ opacity: 0, y: 28 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+            transition={{ duration: 1.1, delay: 0.75, ease: EASE }}
+            className="relative w-full blur-[2px]"
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-[#6E1E2A]/70 via-transparent to-transparent"
+            style={{
+              WebkitMaskImage: 'url(/images/camera.png)',
+              maskImage: 'url(/images/camera.png)',
+              WebkitMaskSize: '100% 100%',
+              maskSize: '100% 100%',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+            }}
+          />
+        </div>
+
+        <div className="relative mx-auto w-full" style={{ height: stageH }}>
+          {/* Portrait positioning zone */}
+          <div className="absolute left-0 right-0 top-0" style={{ height: cardH }}>
+            {/* Drag-to-browse layer (behind cards) */}
+            <motion.div
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.16}
+              onDragEnd={(_, info) => {
+                if (info.offset.x < -40) goNext();
+                else if (info.offset.x > 40) goPrev();
+              }}
+              className="absolute inset-0 z-0 cursor-grab active:cursor-grabbing"
+              aria-hidden
+            />
+
             {sorted.map((member, i) => {
-              const d = hierarchyPhase(i);
-              if (Math.abs(d) > maxOffset) return null;
+              const off = offsetOf(i);
+              const absOff = Math.abs(off);
+              const baseScale = off === 0 ? 1 : absOff === 1 ? 0.62 : absOff === 2 ? 0.4 : 0.32;
+              const opacity = absOff === 0 ? 1 : absOff === 1 ? 0.55 : absOff === 2 && maxPeek > 1 ? 0.18 : 0;
+              const zIndex = Math.max(0, 30 - absOff * 10);
+              const offsetX = Math.sign(off) * (absOff <= 1 ? spacing1 : spacing2);
+
               return (
-                <FanCard
+                <motion.div
                   key={member.id}
-                  member={member}
-                  phase={d}
-                  spread={fullSpreadMV}
-                  reveal={reveal}
-                  cfg={cfg}
-                  fadeStart={fadeStart}
-                  fadeEnd={fadeEnd}
-                  reduced={reduced}
-                  inView={inView}
-                />
+                  className="absolute top-0 will-change-transform"
+                  style={{ left: '50%', width: card, height: cardH, marginLeft: -card / 2, zIndex, pointerEvents: absOff > 1 ? 'none' : 'auto' }}
+                  initial={false}
+                  animate={{ x: offsetX, scale: baseScale, rotate: off * 3, opacity }}
+                  transition={SPRING}
+                  whileHover={{ scale: baseScale * 1.07 }}
+                  onClick={() => off !== 0 && setIndex(i)}
+                  role="button"
+                  tabIndex={off === 0 ? 0 : -1}
+                  aria-label={`${member.name}, ${member.position}`}
+                >
+                  <CardSquare member={member} className="h-full w-full" />
+                  <div className="absolute left-0 right-0" style={{ top: cardH + 10 }}>
+                    <Nameplate member={member} />
+                  </div>
+                </motion.div>
               );
             })}
           </div>
-        </motion.div>
+
+          {/* Prev / next arrows */}
+          <button type="button" onClick={goPrev} aria-label="Previous member" className={`absolute left-1 -translate-y-1/2 sm:left-2 ${navBtnClass}`} style={{ top: cardH / 2 }}>
+            <ChevronLeft size={20} />
+          </button>
+          <button type="button" onClick={goNext} aria-label="Next member" className={`absolute right-1 -translate-y-1/2 sm:right-2 ${navBtnClass}`} style={{ top: cardH / 2 }}>
+            <ChevronRight size={20} />
+          </button>
+        </div>
+
+        {/* Auto-play progress hairline */}
+        <div className="mx-auto mt-10 h-[3px] max-w-3xl overflow-hidden rounded-full bg-charcoal/10">
+          <div
+            className="h-full origin-left bg-burgundy transition-transform duration-300 ease-linear"
+            style={{ transform: `scaleX(${(index + 1) / n})` }}
+          />
+        </div>
       </div>
+
+      <CarouselStyles />
     </section>
   );
 };
+
+const CarouselStyles: React.FC = () => (
+  <style>{`
+    .text-outline {
+      -webkit-text-stroke: 1.5px var(--color-burgundy);
+      color: transparent;
+    }
+    .vintage {
+      filter: saturate(0.82) contrast(1.06) brightness(0.99) sepia(0.08) grayscale(0.1);
+    }
+    .card-vignette {
+      background: radial-gradient(120% 100% at 50% 18%, transparent 50%, rgba(20,10,12,0.34) 100%);
+    }
+    .bg-paperish {
+      background-image:
+        radial-gradient(120% 90% at 15% 0%, rgba(255,255,255,0.9), transparent 60%),
+        radial-gradient(90% 60% at 85% 100%, rgba(110,30,42,0.04), transparent 60%);
+    }
+    @keyframes dustUp {
+      0% { transform: translate3d(0, 10vh, 0); opacity: 0; }
+      12% { opacity: 0.5; }
+      100% { transform: translate3d(0, -110vh, 0); opacity: 0; }
+    }
+    .dust {
+      position: absolute;
+      bottom: -4px;
+      border-radius: 9999px;
+      background: rgba(110, 30, 42, 0.4);
+      filter: blur(1px);
+      will-change: transform, opacity;
+      animation: dustUp linear infinite;
+    }
+  `}</style>
+);

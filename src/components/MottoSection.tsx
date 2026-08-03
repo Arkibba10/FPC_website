@@ -66,7 +66,7 @@ export const MottoSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.9, ease: EASE }}
-            className="relative rounded-[26px] border-2 border-[#2A2A2A] bg-[#F5F0E8] text-charcoal overflow-hidden shadow-[0_40px_100px_-25px_rgba(0,0,0,0.8)]"
+            className="relative z-10 rounded-[26px] border-2 border-[#2A2A2A] bg-[#F5F0E8] text-charcoal overflow-hidden shadow-[0_40px_100px_-25px_rgba(0,0,0,0.8)]"
           >
             {/* Top film-strip perforations */}
             <div className="sprocket h-5 md:h-6 bg-[#2A2A2A]" />
