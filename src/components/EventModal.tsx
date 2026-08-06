@@ -37,7 +37,7 @@ export const EventModal: React.FC<EventModalProps> = ({ event, onClose }) => {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2.5 rounded-full bg-black/50 border border-white/10 text-white hover:bg-burgundy hover:text-gold hover:scale-110 transition-all duration-300 z-50 cursor-pointer"
+            className="absolute top-4 right-4 p-2.5 rounded-full bg-black/50 border border-white/10 text-white hover:bg-burgundy hover:text-gold hover:scale-110 transition-[transform,background-color,color] duration-300 z-50 cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -58,7 +58,7 @@ export const EventModal: React.FC<EventModalProps> = ({ event, onClose }) => {
                 download={`${event.title.replace(/\s+/g, '_')}_cover.jpg`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-full bg-black/60 hover:bg-burgundy text-white hover:text-gold border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all shadow-lg hover:scale-110 cursor-pointer"
+                className="p-2.5 rounded-full bg-black/60 hover:bg-burgundy text-white hover:text-gold border border-white/10 hover:border-gold/30 flex items-center justify-center transition-[transform,background-color,color,border-color] shadow-lg hover:scale-110 cursor-pointer"
                 title="Download Cover Image"
               >
                 <Download size={14} />
@@ -186,7 +186,7 @@ export const EventModal: React.FC<EventModalProps> = ({ event, onClose }) => {
                           download={`${event.title.replace(/\s+/g, '_')}_gallery_${idx}.jpg`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 rounded-lg bg-black/70 border border-white/10 text-white hover:text-gold hover:bg-burgundy transition-all"
+                          className="p-1.5 rounded-lg bg-black/70 border border-white/10 text-white hover:text-gold hover:bg-burgundy transition-colors"
                           title="Download Photo"
                         >
                           <Download size={12} />

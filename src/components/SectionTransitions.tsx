@@ -1,8 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import React from 'react';
 import { Scissors } from 'lucide-react';
-
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 const FILM_HOLES =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='24'%3E%3Crect x='8' y='5' width='6' height='14' rx='2.5' fill='%23F5F0E8'/%3E%3C/svg%3E\")";
@@ -98,27 +95,5 @@ export const SectionDivider: React.FC<{ variant?: DividerVariant }> = ({ variant
 };
 
 export const SectionMotion: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
-  const reduced = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { amount: 0.06, margin: '0px 0px -10% 0px' });
-
-  if (reduced) {
-    return (
-      <div ref={ref} className={className}>
-        {children}
-      </div>
-    );
-  }
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 24 }}
-      transition={{ duration: 0.4, ease: EASE }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 };

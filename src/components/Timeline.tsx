@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Event } from '../types';
 import { Calendar, MapPin, ChevronDown, ChevronUp, ArrowRight, Sparkles } from 'lucide-react';
 import { EventModal } from './EventModal';
+import { OldBoxTV } from './OldBoxTV';
 
 interface TimelineProps {
   events: Event[];
@@ -10,7 +12,7 @@ interface TimelineProps {
 
 export const Timeline: React.FC<TimelineProps> = ({ events }) => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  
+
   // Group events by year, most recent first
   const groupedEvents = events.reduce<Record<string, Event[]>>((acc, event) => {
     const year = event.date.match(/\d{4}/)?.[0] ?? 'Unknown';
@@ -32,17 +34,31 @@ export const Timeline: React.FC<TimelineProps> = ({ events }) => {
 
   // Use the first event's cover as the group banner image
   const getGroupBannerImage = (groupName: string) => {
-    return groupedEvents[groupName][0]?.coverImage ?? '/images/event1.jpg';
+    return groupedEvents[groupName][0]?.coverImage ?? '/images/contest-1st-namira-islam.jpg';
   };
 
   return (
-    <section className="py-24 bg-beige relative overflow-hidden">
-      {/* Background Subtle Elements */}
-      <div className="absolute top-10 left-10 text-[12vw] font-playfair font-bold text-charcoal/[0.02] select-none pointer-events-none">
-        CHRONICLES
+    <section className="relative bg-beige">
+      {/* Old box TV — sticky, viewport-height framing that belongs to this page.
+          It pins just below the fixed site header (top-[80px]) so the whole
+          cabinet — including the top bezel — stays visible, then releases exactly
+          as the section bottom reaches the viewport bottom and scrolls away with
+          the section — never covering the adjacent pages. The content wrapper is
+          pulled up (-mt-[calc(100vh-80px)]) so the page plays behind the tube from
+          the first frame. It fades in/out together with the page's other elements
+          (inherited from the parent section reveal). */}
+      <div className="sticky top-[80px] z-30 h-[calc(100vh-80px)] pointer-events-none">
+        <OldBoxTV />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+      {/* Background Subtle Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        <div className="absolute top-10 left-10 text-[12vw] font-playfair font-bold text-charcoal/[0.02]">
+          CHRONICLES
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 md:px-12 py-24 relative z-10 -mt-[calc(100vh-80px)]">
         {/* Editorial Header */}
         <div className="mb-16">
           <span className="text-burgundy font-mono uppercase tracking-widest text-xs block mb-3">
@@ -64,7 +80,7 @@ export const Timeline: React.FC<TimelineProps> = ({ events }) => {
             return (
               <div 
                 key={groupName}
-                className="border border-charcoal/5 rounded-3xl overflow-hidden bg-white/40 shadow-sm backdrop-blur-sm transition-all duration-300"
+                className="border border-charcoal/5 rounded-3xl overflow-hidden bg-white/40 shadow-sm backdrop-blur-sm"
               >
                 {/* WIDE BANNER (Clickable Header) */}
                 <div
@@ -106,7 +122,7 @@ export const Timeline: React.FC<TimelineProps> = ({ events }) => {
                   </div>
 
                   {/* Expand/Collapse Button */}
-                  <div className="relative z-10 p-4 rounded-full bg-white/5 border border-white/10 text-gold group-hover:bg-burgundy group-hover:border-gold/30 transition-all duration-300">
+                  <div className="relative z-10 p-4 rounded-full bg-white/5 border border-white/10 text-gold group-hover:bg-burgundy group-hover:border-gold/30 transition-colors duration-300">
                     {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
                 </div>
@@ -129,7 +145,7 @@ export const Timeline: React.FC<TimelineProps> = ({ events }) => {
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: idx * 0.1 }}
                             onClick={() => setSelectedEvent(event)}
-                            className="flex flex-col md:flex-row items-stretch gap-6 bg-white/60 hover:bg-white border border-charcoal/5 hover:border-gold/30 p-5 rounded-2xl cursor-pointer hover:shadow-lg transition-all duration-300 group"
+                            className="flex flex-col md:flex-row items-stretch gap-6 bg-white/60 hover:bg-white border border-charcoal/5 hover:border-gold/30 p-5 rounded-2xl cursor-pointer hover:shadow-lg transition-[background-color,border-color,box-shadow] duration-300 group"
                           >
                             {/* Event image thumbnail */}
                             <div className="w-full md:w-48 aspect-video md:aspect-[4/3] rounded-xl overflow-hidden bg-charcoal flex-shrink-0 relative">
@@ -183,8 +199,11 @@ export const Timeline: React.FC<TimelineProps> = ({ events }) => {
         </div>
       </div>
 
-      {/* Event Details Fullscreen Modal */}
-      <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+      {/* Event Details Fullscreen Modal (portaled so it stacks above the TV) */}
+      {createPortal(
+        <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />,
+        document.body
+      )}
     </section>
   );
 };

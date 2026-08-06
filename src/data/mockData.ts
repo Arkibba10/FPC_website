@@ -219,11 +219,11 @@ export const defaultEvents: Event[] = [
     title: 'The View Finder — Season 7',
     date: 'February 15, 2024',
     description: 'The flagship annual photography carnival and gallery exhibition showcasing visual stories by CSE students.',
-    coverImage: '/images/event1.jpg',
+    coverImage: '/images/contest-1st-namira-islam.jpg',
     images: [
-      '/images/event1.jpg',
-      '/images/gallery1.jpg',
-      '/images/gallery2.jpg'
+      '/images/contest-1st-namira-islam.jpg',
+      '/images/contest-cat2-jannatul-shormi.jpg',
+      '/images/contest-cat1-mehedi-munna.jpg'
     ],
     videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
     location: 'UAP Plaza & Auditorium',
@@ -235,11 +235,11 @@ export const defaultEvents: Event[] = [
     title: 'Photography Workshop: Photo Adda',
     date: 'November 12, 2023',
     description: 'An interactive photography masterclass and feedback session on visual storytelling with industry professionals.',
-    coverImage: '/images/event2.jpg',
+    coverImage: '/images/contest-2nd-tahmid-jashim.jpg',
     images: [
-      '/images/event2.jpg',
-      '/images/gallery3.jpg',
-      '/images/gallery4.jpg'
+      '/images/contest-2nd-tahmid-jashim.jpg',
+      '/images/contest-cat3-kayes-biplob.jpg',
+      '/images/contest-cat1-zarin-anjum.jpg'
     ],
     videoUrl: 'https://www.w3schools.com/html/movie.mp4',
     location: 'CSE Seminar Hall, UAP',
@@ -251,11 +251,11 @@ export const defaultEvents: Event[] = [
     title: '7th Photowalk: Dhaka',
     date: 'September 05, 2023',
     description: 'A street photography expedition capturing the vibrant cultural heritage and shadows of Old Dhaka.',
-    coverImage: '/images/event3.jpg',
+    coverImage: '/images/contest-cat1-faisal-hossain.jpg',
     images: [
-      '/images/event3.jpg',
-      '/images/gallery1.jpg',
-      '/images/gallery3.jpg'
+      '/images/contest-cat1-faisal-hossain.jpg',
+      '/images/contest-cat2-md-arkive.jpg',
+      '/images/contest-cat3-nazmul-nadim.jpg'
     ],
     location: 'Shankhari Bazar & Ahsan Manzil, Old Dhaka',
     details: 'Our 7th Photowalk took 40 passionate students through the historical, narrow lanes of Old Dhaka. Guided by senior club mentors, students practiced composition, environmental portraits, and utilizing high-contrast natural light.',
@@ -266,11 +266,11 @@ export const defaultEvents: Event[] = [
     title: '8th Photowalk: Narayanganj',
     date: 'January 18, 2024',
     description: 'Capturing the ancient architectural ruins of Panam City and the landscapes of Sonargaon.',
-    coverImage: '/images/gallery4.jpg',
+    coverImage: '/images/contest-cat2-jannatul-shormi.jpg',
     images: [
-      '/images/gallery4.jpg',
-      '/images/gallery1.jpg',
-      '/images/gallery2.jpg'
+      '/images/contest-cat2-jannatul-shormi.jpg',
+      '/images/contest-cat3-adnan-sami.jpg',
+      '/images/contest-cat2-julias-khan.jpg'
     ],
     location: 'Panam City, Sonargaon',
     details: 'The 8th Photowalk explored the historic ruins of Panam City and the banks of the Shitalakshya river. Students focused on architectural photography, textures, and landscape composition under golden hour lighting.',
@@ -280,44 +280,154 @@ export const defaultEvents: Event[] = [
 
 export const defaultGallery: GalleryItem[] = [
   {
-    id: 'g1',
-    title: 'Mist in the Woods',
-    category: 'Landscape',
-    image: '/images/gallery1.jpg',
-    photographer: 'Sazzad Hossain',
-    date: 'January 2024',
-    description: 'A serene capture of morning sun rays cutting through dense autumn fog in the forests of Sreemangal.',
-    order: 1
+    id: 'g5',
+    title: 'First Place Winner',
+    category: '1st Place',
+    image: '/images/contest-1st-namira-islam.jpg',
+    photographer: 'Namira Islam',
+    date: 'April 2026',
+    description: 'Grand prize entry from the FPC photography contest, April 2026.',
+    order: 5
   },
   {
-    id: 'g2',
-    title: 'Shadows of the Arch',
-    category: 'Architecture',
-    image: '/images/gallery2.jpg',
-    photographer: 'Nayeem Murshed',
-    date: 'December 2023',
-    description: 'An abstract architectural perspective focusing on geometric shadows and minimalist concrete textures.',
-    order: 2
+    id: 'g6',
+    title: 'Second Place Winner',
+    category: '2nd Place',
+    image: '/images/contest-2nd-tahmid-jashim.jpg',
+    photographer: 'Tahmid Ebne Jashim',
+    date: 'April 2026',
+    description: 'Runner-up entry from the FPC photography contest, April 2026.',
+    order: 6
   },
   {
-    id: 'g3',
-    title: 'The Analog Soul',
-    category: 'Portrait',
-    image: '/images/gallery3.jpg',
-    photographer: 'Ripa Rani Biswas',
-    date: 'October 2023',
-    description: 'A dramatic black and white portrait celebrating the tactile beauty of analog filmmaking and vintage gear.',
-    order: 3
+    id: 'g7',
+    title: 'Category 1 Entry',
+    category: 'Category 1',
+    image: '/images/contest-cat1-mehedi-munna.jpg',
+    photographer: 'Md. Mehedi Hasan Munna',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 7
   },
   {
-    id: 'g4',
-    title: 'Golden Hour Dunes',
-    category: 'Nature',
-    image: '/images/gallery4.jpg',
-    photographer: 'Tasnim Rahman',
-    date: 'November 2023',
-    description: 'The hypnotic patterns of wind-swept sand dunes glowing under the warm embrace of a desert sunset.',
-    order: 4
+    id: 'g8',
+    title: 'Category 2 Entry',
+    category: 'Category 2',
+    image: '/images/contest-cat2-jannatul-shormi.jpg',
+    photographer: 'Jannatul Ferdous Shormi',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 8
+  },
+  {
+    id: 'g9',
+    title: 'Category 2 Entry',
+    category: 'Category 2',
+    image: '/images/contest-cat2-julias-khan.jpg',
+    photographer: 'Julias Uddin Khan',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 9
+  },
+  {
+    id: 'g10',
+    title: 'Category 2 Entry',
+    category: 'Category 2',
+    image: '/images/contest-cat2-md-arkive.jpg',
+    photographer: 'Md Arkive',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 10
+  },
+  {
+    id: 'g11',
+    title: 'Category 3 Entry',
+    category: 'Category 3',
+    image: '/images/contest-cat3-kayes-biplob.jpg',
+    photographer: 'Md Kayes Ahammed Biplob',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 11
+  },
+  {
+    id: 'g12',
+    title: 'Category 3 Entry',
+    category: 'Category 3',
+    image: '/images/contest-cat3-nazmul-nadim.jpg',
+    photographer: 'Mohammad Nazmul Hossain Nadim',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 12
+  },
+  {
+    id: 'g13',
+    title: 'Category 3 Entry',
+    category: 'Category 3',
+    image: '/images/contest-cat3-adnan-sami.jpg',
+    photographer: 'Md. Adnan Karim Sami',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 13
+  },
+  {
+    id: 'g14',
+    title: 'Category 1 Entry',
+    category: 'Category 1',
+    image: '/images/contest-cat1-faisal-hossain.jpg',
+    photographer: 'Faisal Hossain',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 14
+  },
+  {
+    id: 'g15',
+    title: 'Category 1 Entry',
+    category: 'Category 1',
+    image: '/images/contest-cat1-zarin-anjum.jpg',
+    photographer: 'Zarin Anjum',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 15
+  },
+  {
+    id: 'g16',
+    title: 'Category 1 Entry',
+    category: 'Category 1',
+    image: '/images/contest-cat1-tahsin-siddika.jpg',
+    photographer: 'Tahsin Siddika',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 16
+  },
+  {
+    id: 'g17',
+    title: 'Category 2 Entry',
+    category: 'Category 2',
+    image: '/images/contest-cat2-tahmid-jashim-b.jpg',
+    photographer: 'Tahmid Ebne Jashim',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 17
+  },
+  {
+    id: 'g18',
+    title: 'Contest Entry',
+    category: '1st Place',
+    image: '/images/contest-namira-islam-2.jpg',
+    photographer: 'Namira Islam',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 18
+  },
+  {
+    id: 'g19',
+    title: 'Contest Entry',
+    category: '1st Place',
+    image: '/images/contest-namira-islam-3.jpg',
+    photographer: 'Namira Islam',
+    date: 'April 2026',
+    description: 'Official entry from the FPC photography contest, April 2026.',
+    order: 19
   }
 ];
 
@@ -387,6 +497,16 @@ export const defaultUpdates: UpdatePost[] = [
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
     content: 'To celebrate World Photography Day, FPC organized a special campus photowalk and pop-up exhibition. Over 50 students participated, exploring the play of architectural shadows, campus life, and geometric reflections across the UAP campus. A temporary gallery displayed the best 20 shots of the day at the plaza.',
     order: 3
+  },
+  {
+    id: 'u4',
+    title: 'Annual Exhibition "Through the Lens" — Submissions Opening Soon',
+    date: 'May 12, 2024',
+    category: 'Announcement',
+    image: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&q=80&w=800',
+    content: 'The club\u2019s flagship annual exhibition returns. Twelve months of student frames \u2014 portraits, streets, and silent films \u2014 will fill the UAP campus. Submissions open soon; every member is invited to hang one frame on the wall.',
+    order: 4,
+    status: 'upcoming'
   }
 ];
 
@@ -412,11 +532,11 @@ export const defaultSettings: WebsiteSettings = {
   linkedinUrl: 'https://linkedin.com/company/fpc-uap',
   heroTitle: 'FILM & PHOTOGRAPHY CLUB',
   heroSubtitle: 'CSE-UAP',
-  motto: 'The Film & Photography Club, CSE-UAP is a creative community of students from the Department of Computer Science & Engineering at the University of Asia Pacific, dedicated to capturing stories, fostering visual creativity, and inspiring innovation through photography, filmmaking, and digital media.',
+  motto: 'The Film & Photography Club, CSE-UAP is a creative community of students from the Department of Computer Science & Engineering at the University of Asia Pacific, dedicated to capturing stories, fostering visual creativity, and inspiring innovation through photography, filmmaking, and digital media. We provide a collaborative platform where aspiring photographers, filmmakers, designers, and storytellers can develop their skills, exchange ideas, and transform creative visions into meaningful visual experiences.',
   mottoBgImages: [
-    '/images/gallery1.jpg',
-    '/images/gallery2.jpg',
-    '/images/gallery3.jpg',
-    '/images/gallery4.jpg'
+    '/images/contest-1st-namira-islam.jpg',
+    '/images/contest-cat2-jannatul-shormi.jpg',
+    '/images/contest-cat3-kayes-biplob.jpg',
+    '/images/contest-cat1-mehedi-munna.jpg'
   ]
 };

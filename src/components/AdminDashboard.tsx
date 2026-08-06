@@ -101,11 +101,11 @@ export const AdminDashboard: React.FC = () => {
     setIsAddingNew(true);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(username, password);
+    const success = await login(username, password);
     if (!success) {
-      setAuthError('Invalid credentials. Hint: admin/admin123, editor/editor123, viewer/viewer123');
+      setAuthError('Invalid credentials. Hint: admin/Fpc@admin2026, editor/Fpc@editor2026');
     } else {
       setAuthError('');
       setConvenerForm(convener);
@@ -278,7 +278,7 @@ export const AdminDashboard: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full bg-burgundy hover:bg-burgundy-light text-gold border border-gold/30 font-mono text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl transition-all hover:scale-[1.02] cursor-pointer"
+              className="w-full bg-burgundy hover:bg-burgundy-light text-gold border border-gold/30 font-mono text-xs uppercase tracking-widest font-bold py-3.5 rounded-xl transition-[transform,background-color] hover:scale-[1.02] cursor-pointer"
             >
               Authenticate
             </button>
@@ -288,18 +288,14 @@ export const AdminDashboard: React.FC = () => {
             <span className="text-[10px] font-mono text-white/30 uppercase tracking-widest block">
               Demo Credentials:
             </span>
-            <div className="grid grid-cols-3 gap-2 mt-3 text-[9px] font-mono text-white/40">
+            <div className="grid grid-cols-2 gap-2 mt-3 text-[9px] font-mono text-white/40">
               <div className="bg-white/5 p-2 rounded border border-white/5">
                 <span className="text-gold font-bold block">ADMIN</span>
-                admin / admin123
+                admin / Fpc@admin2026
               </div>
               <div className="bg-white/5 p-2 rounded border border-white/5">
                 <span className="text-gold font-bold block">EDITOR</span>
-                editor / editor123
-              </div>
-              <div className="bg-white/5 p-2 rounded border border-white/5">
-                <span className="text-gold font-bold block">VIEWER</span>
-                viewer / viewer123
+                editor / Fpc@editor2026
               </div>
             </div>
           </div>
@@ -330,7 +326,7 @@ export const AdminDashboard: React.FC = () => {
                 <div 
                   key={idx}
                   onClick={() => selectStockImage(item.url)}
-                  className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer border border-white/5 hover:border-gold/50 transition-all"
+                  className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer border border-white/5 hover:border-gold/50 transition-colors"
                 >
                   <img src={item.url} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors" />
@@ -444,7 +440,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <button
             onClick={logout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/10 text-white/60 hover:bg-burgundy hover:text-gold hover:border-gold/30 text-xs font-mono uppercase tracking-widest font-bold transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/10 text-white/60 hover:bg-burgundy hover:text-gold hover:border-gold/30 text-xs font-mono uppercase tracking-widest font-bold transition-colors cursor-pointer"
           >
             <LogOut size={14} />
             <span>Sign Out</span>

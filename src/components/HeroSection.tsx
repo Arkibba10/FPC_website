@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { motion, useAnimationFrame, useInView, useMotionValue } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Flashlight, Timer, FlipHorizontal2 } from 'lucide-react';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -22,18 +22,21 @@ const DUST = [
 ];
 
 const CAROUSEL_IMAGES = [
-  { src: '/images/gallery1.jpg', label: 'CAMPUS FEST', rot: -6 },
-  { src: '/images/event1.jpg', label: 'PHOTOWALK', rot: 4 },
-  { src: '/images/gallery2.jpg', label: 'PORTRAIT', rot: -3 },
-  { src: '/images/event2.jpg', label: 'GOLDEN HOUR', rot: 7 },
-  { src: '/images/gallery3.jpg', label: 'STREET', rot: -5 },
-  { src: '/images/event3.jpg', label: 'FILM SET', rot: 3 },
-  { src: '/images/gallery4.jpg', label: 'ARCHITECTURE', rot: -7 },
-  { src: '/images/gallery1.jpg', label: 'NIGHT SHOTS', rot: 5 },
-  { src: '/images/event1.jpg', label: 'EXHIBIT', rot: -4 },
-  { src: '/images/gallery2.jpg', label: 'WORKSHOP', rot: 2 },
-  { src: '/images/event2.jpg', label: 'FRIENDS', rot: -6 },
-  { src: '/images/gallery3.jpg', label: 'CINEMATIC', rot: 6 },
+  { src: '/images/contest-1st-namira-islam.jpg', label: '1ST PLACE', rot: -3 },
+  { src: '/images/contest-cat1-faisal-hossain.jpg', label: 'CATEGORY 1', rot: 5 },
+  { src: '/images/contest-cat2-jannatul-shormi.jpg', label: 'CATEGORY 2', rot: -4 },
+  { src: '/images/contest-namira-islam-2.jpg', label: '1ST PLACE', rot: 2 },
+  { src: '/images/contest-cat3-kayes-biplob.jpg', label: 'CATEGORY 3', rot: -6 },
+  { src: '/images/contest-2nd-tahmid-jashim.jpg', label: '2ND PLACE', rot: 4 },
+  { src: '/images/contest-cat1-zarin-anjum.jpg', label: 'CATEGORY 1', rot: -3 },
+  { src: '/images/contest-cat2-md-arkive.jpg', label: 'CATEGORY 2', rot: 6 },
+  { src: '/images/contest-cat3-nazmul-nadim.jpg', label: 'CATEGORY 3', rot: -5 },
+  { src: '/images/contest-cat1-mehedi-munna.jpg', label: 'CATEGORY 1', rot: 3 },
+  { src: '/images/contest-namira-islam-3.jpg', label: '1ST PLACE', rot: -2 },
+  { src: '/images/contest-cat2-julias-khan.jpg', label: 'CATEGORY 2', rot: 5 },
+  { src: '/images/contest-cat3-adnan-sami.jpg', label: 'CATEGORY 3', rot: -4 },
+  { src: '/images/contest-cat2-tahmid-jashim-b.jpg', label: 'CATEGORY 2', rot: 2 },
+  { src: '/images/contest-cat1-tahsin-siddika.jpg', label: 'CATEGORY 1', rot: -7 },
 ];
 
 const LOOP_SECONDS = 30;
@@ -56,23 +59,8 @@ const FOCUS_CORNERS = [
 
 const PolaroidCarousel: React.FC = () => {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const seqRef = useRef(0);
-  const x = useMotionValue(0);
   const [slow, setSlow] = useState(false);
   const isInView = useInView(wrapRef, { margin: '100px' });
-
-  useAnimationFrame((_, delta) => {
-    if (!isInView) return;
-    const track = trackRef.current;
-    if (!track) return;
-    if (!seqRef.current) seqRef.current = track.scrollWidth / COPIES;
-    const seq = seqRef.current;
-    const speed = (seq / LOOP_SECONDS) * (slow ? SLOW_FACTOR : 1);
-    let cur = x.get() - (speed * delta) / 1000;
-    if (cur < -seq) cur += seq;
-    x.set(cur);
-  });
 
   return (
     <div
@@ -81,28 +69,49 @@ const PolaroidCarousel: React.FC = () => {
       onMouseEnter={() => setSlow(true)}
       onMouseLeave={() => setSlow(false)}
     >
-      <motion.div
-        ref={trackRef}
-        style={{ x }}
-        className="absolute inset-y-0 left-0 flex items-center will-change-transform"
+      <div
+        className={`carousel-track absolute inset-y-0 left-0 flex items-center will-change-transform ${isInView ? '' : 'carousel-paused'} ${slow ? 'carousel-slow' : ''}`}
       >
         {Array.from({ length: COPIES }).flatMap((_, c) =>
           CAROUSEL_IMAGES.map((item, i) => (
             <div
               key={`${c}-${i}`}
               style={{ transform: `rotate(${item.rot}deg)` }}
-              className="relative shrink-0 aspect-[4/5] w-[24cqw] max-lg:landscape:w-[18cqh] lg:w-[10vw] bg-white rounded-[0.7cqw] max-lg:landscape:rounded-[0.4cqh] lg:rounded-[0.4vw] p-[1cqw] max-lg:landscape:p-[0.9cqh] lg:p-[0.6vw] -mr-[2cqw] max-lg:landscape:-mr-[1.4cqh] lg:-mr-[0.55vw] shadow-[0_0.5cqw_1cqw_rgba(0,0,0,0.18)] max-lg:landscape:shadow-[0_0.5cqh_1cqh_rgba(0,0,0,0.18)] lg:shadow-[0_0.25vw_0.6vw_rgba(0,0,0,0.18)] hover:scale-[1.1] hover:z-30 hover:shadow-[0_0.8cqw_1.8cqw_rgba(0,0,0,0.3)] max-lg:landscape:hover:shadow-[0_0.8cqh_1.8cqh_rgba(0,0,0,0.3)] lg:hover:shadow-[0_0.5vw_1.2vw_rgba(0,0,0,0.3)] transition-[scale,box-shadow] duration-300 flex flex-col"
+              className="relative shrink-0 aspect-[4/5] w-[24cqw] max-lg:landscape:w-[18cqh] lg:w-[10vw] bg-white rounded-[0.7cqw] max-lg:landscape:rounded-[0.4cqh] lg:rounded-[0.4vw] p-[1cqw] max-lg:landscape:p-[0.9cqh] lg:p-[0.6vw] -mr-[2cqw] max-lg:landscape:-mr-[1.4cqh] lg:-mr-[0.55vw] border border-[#151313]/[0.06] shadow-[0_0.5cqw_1cqw_rgba(0,0,0,0.18)] max-lg:landscape:shadow-[0_0.5cqh_1cqh_rgba(0,0,0,0.18)] lg:shadow-[0_0.25vw_0.6vw_rgba(0,0,0,0.18)] hover:scale-[1.1] hover:z-30 hover:shadow-[0_0.8cqw_1.8cqw_rgba(0,0,0,0.3)] max-lg:landscape:hover:shadow-[0_0.8cqh_1.8cqh_rgba(0,0,0,0.3)] lg:hover:shadow-[0_0.5vw_1.2vw_rgba(0,0,0,0.3)] transition-[scale,box-shadow] duration-300 flex flex-col"
             >
+              <span className="absolute left-[0.6cqw] max-lg:landscape:left-[0.5cqh] lg:left-[0.35vw] top-[0.7cqw] max-lg:landscape:top-[0.5cqh] lg:top-[0.35vw] z-10 font-mono text-[1.6cqw] max-lg:landscape:text-[1.3cqh] lg:text-[0.6vw] tracking-[0.22em] text-[#641C2B]/85">
+                NO.{String(c * CAROUSEL_IMAGES.length + i + 1).padStart(2, '0')}
+              </span>
               <div className="flex-1 w-full overflow-hidden rounded-[0.3cqw] max-lg:landscape:rounded-[0.2cqh] lg:rounded-[0.2vw]">
                 <img src={item.src} alt={item.label} className="w-full h-full object-cover" loading="lazy" />
               </div>
-              <p className="pt-[1.4cqw] max-lg:landscape:pt-[1.2cqh] lg:pt-[0.8vw] text-center text-[2cqw] max-lg:landscape:text-[1.7cqh] lg:text-[0.7vw] font-mono uppercase tracking-[0.18em] text-[#151313]/60 whitespace-nowrap">
+              <p className="pt-[1.4cqw] max-lg:landscape:pt-[1.2cqh] lg:pt-[0.8vw] text-center text-[2cqw] max-lg:landscape:text-[1.7cqh] lg:text-[0.7vw] font-mono uppercase tracking-[0.28em] pl-[0.28em] text-[#151313]/60 whitespace-nowrap">
                 {item.label}
               </p>
             </div>
           ))
         )}
-      </motion.div>
+      </div>
+      <style>{`
+        @keyframes carouselScroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-33.3333%); }
+        }
+        .carousel-track {
+          animation: carouselScroll ${LOOP_SECONDS}s linear infinite;
+        }
+        .carousel-slow {
+          animation-duration: ${LOOP_SECONDS / SLOW_FACTOR}s;
+        }
+        .carousel-paused {
+          animation-play-state: paused;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .carousel-track {
+            animation: none;
+          }
+        }
+      `}</style>
     </div>
   );
 };
@@ -127,32 +136,48 @@ const LandingContent: React.FC = () => {
       />
     ))}
 
-    <div className="absolute left-1/2 -translate-x-1/2 top-[31%] w-[88%] max-lg:landscape:top-[33%] max-lg:landscape:w-[84%] lg:top-[41%] lg:w-[56%] flex flex-col items-center text-center z-10 select-none">
-      <div className="relative mt-[3cqw] max-lg:landscape:mt-[1.6cqh] lg:mt-[1.3vw]">
+    <div className="absolute left-1/2 -translate-x-1/2 top-[30%] w-[88%] max-lg:landscape:top-[33%] max-lg:landscape:w-[84%] lg:top-[39%] lg:w-[56%] flex flex-col items-center text-center z-10 select-none">
+      <div className="relative mt-[2.2cqw] max-lg:landscape:mt-[1.6cqh] lg:mt-[1vw]">
         {FOCUS_POSITIONS.map((pos, i) => (
           <span
             key={i}
-            className={`absolute ${pos} w-[4.5cqw] h-[4.5cqw] max-lg:landscape:w-[3.5cqh] max-lg:landscape:h-[3.5cqh] lg:w-[2.4vw] lg:h-[2.4vw] border-[#641C2B]/80 ${FOCUS_CORNERS[i]}`}
+            className={`absolute ${pos} w-[4.5cqw] h-[4.5cqw] max-lg:landscape:w-[3.5cqh] max-lg:landscape:h-[3.5cqh] lg:w-[2.4vw] lg:h-[2.4vw] border-[#641C2B]/70 ${FOCUS_CORNERS[i]}`}
           />
         ))}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.45, ease: EASE }}
-          className="leading-[1.05]"
+          className="leading-[1.02]"
         >
-        <span className="block font-medium text-[5.2cqw] max-lg:landscape:text-[3.8cqh] lg:text-[2vw] tracking-[0.42em] pl-[0.42em] text-[#641C2B]" style={{ fontFamily: "'Poppins', sans-serif" }}>FILM &amp;</span>
-        <span className="mt-[1.4cqw] max-lg:landscape:mt-[0.8cqh] lg:mt-[0.7vw] block font-black text-[8.6cqw] max-lg:landscape:text-[7cqh] lg:text-[4.8vw] tracking-[-0.045em] leading-[1.02] text-[#151313]" style={{ fontFamily: "'Poppins', sans-serif" }}>PHOTOGRAPHY</span>
-        <span className="mt-[1.6cqw] max-lg:landscape:mt-[1cqh] lg:mt-[0.8vw] block font-medium text-[3cqw] max-lg:landscape:text-[2.4cqh] lg:text-[1.25vw] tracking-[0.55em] pl-[0.55em] text-[#641C2B]" style={{ fontFamily: "'Poppins', sans-serif" }}>CLUB</span>
-      </motion.h1>
+          <span className="block font-montserrat font-medium text-[3cqw] max-lg:landscape:text-[2.2cqh] lg:text-[1.7vw] tracking-[0.48em] pl-[0.48em] text-[#641C2B]">FILM &amp;</span>
+          <span className="mt-[0.8cqw] max-lg:landscape:mt-[0.6cqh] lg:mt-[0.35vw] block font-condensed font-semibold uppercase text-[11.5cqw] max-lg:landscape:text-[8.5cqh] lg:text-[7vw] tracking-[-0.015em] leading-[0.95] text-[#151313]">PHOTOGRAPHY</span>
+          <div className="mt-[1.6cqw] max-lg:landscape:mt-[1.2cqh] lg:mt-[0.8vw] flex items-center justify-center gap-[2.4cqw] max-lg:landscape:gap-[1.8cqh] lg:gap-[1vw]">
+            <span className="h-px w-[10cqw] max-lg:landscape:w-[7cqh] lg:w-[4.6vw] bg-[#641C2B]/40" />
+            <span className="font-montserrat font-medium text-[2cqw] max-lg:landscape:text-[1.5cqh] lg:text-[0.95vw] tracking-[0.7em] pl-[0.7em] text-[#641C2B]">CLUB</span>
+            <span className="h-px w-[10cqw] max-lg:landscape:w-[7cqh] lg:w-[4.6vw] bg-[#641C2B]/40" />
+          </div>
+        </motion.h1>
       </div>
+
+      {/* Editorial masthead label */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.55, ease: EASE }}
+        className="mt-[2cqw] max-lg:landscape:mt-[1.4cqh] lg:mt-[0.9vw] mb-[2.6cqw] max-lg:landscape:mb-[1.8cqh] lg:mb-[1.2vw] flex flex-col items-center"
+      >
+        <p className="font-mono text-[1.7cqw] max-lg:landscape:text-[1.3cqh] lg:text-[0.72vw] uppercase tracking-[0.5em] pl-[0.5em] text-[#641C2B]/75">
+          EST. 2017 · CSE-UAP
+        </p>
+        <span className="mt-[0.8cqw] max-lg:landscape:mt-[0.6cqh] lg:mt-[0.35vw] h-px w-[28cqw] max-lg:landscape:w-[20cqh] lg:w-[10vw] bg-[#641C2B]/25" />
+      </motion.div>
 
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.6, ease: EASE }}
-        className="mt-[3cqw] max-lg:landscape:mt-[1.5cqh] lg:mt-[1.2vw] text-[4.8cqw] max-lg:landscape:text-[3.8cqh] lg:text-[2.3vw] leading-[1.2] text-[#641C2B]"
-        style={{ fontFamily: "'Great Vibes', cursive" }}
+        className="mt-[2.4cqw] max-lg:landscape:mt-[1.6cqh] lg:mt-[1.1vw] font-playfair italic text-[4.6cqw] max-lg:landscape:text-[3.4cqh] lg:text-[2.15vw] leading-[1.25] text-[#641C2B]"
       >
         Seeing Beyond the Ordinary
       </motion.p>
@@ -161,9 +186,9 @@ const LandingContent: React.FC = () => {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.7, ease: EASE }}
-        className="mt-[2cqw] max-lg:landscape:mt-[1.3cqh] lg:mt-[0.8vw] text-[3cqw] max-lg:landscape:text-[1.9cqh] lg:text-[1vw] leading-relaxed text-[#151313]/60 max-w-[70cqw] max-lg:landscape:max-w-[44cqw] lg:max-w-[26vw]"
+        className="mt-[1.8cqw] max-lg:landscape:mt-[1.3cqh] lg:mt-[0.8vw] text-[3cqw] max-lg:landscape:text-[2cqh] lg:text-[1.05vw] leading-[1.7] text-[#151313]/60 max-w-[64cqw] max-lg:landscape:max-w-[46cqh] lg:max-w-[28vw]"
       >
-        Capturing moments, creating stories, and bringing creative people together.
+        Capturing moments. Creating stories. Bringing creative people together.
       </motion.p>
 
       <motion.div
@@ -185,6 +210,18 @@ const LandingContent: React.FC = () => {
           Contact Us
         </button>
       </motion.div>
+
+      {/* Editorial metadata footer */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.95, ease: EASE }}
+        className="mt-[2.6cqw] max-lg:landscape:mt-[1.8cqh] lg:mt-[1.1vw] flex w-full items-center justify-between gap-[2cqw] font-mono text-[1.5cqw] max-lg:landscape:text-[1.2cqh] lg:text-[0.68vw] uppercase tracking-[0.35em] text-[#151313]/45"
+      >
+        <span className="whitespace-nowrap">Film / Photo / Story</span>
+        <span className="h-px flex-1 bg-[#641C2B]/20" />
+        <span className="whitespace-nowrap tabular-nums">Spring '26 — Vol. 01</span>
+      </motion.div>
     </div>
   </div>
   );
@@ -194,37 +231,42 @@ const CameraUI: React.FC = () => (
   <div className="absolute inset-0 z-30 pointer-events-none select-none font-mono">
     <div className="absolute inset-x-0 top-0 h-[10%] flex items-start justify-center pt-[1.6%] max-lg:landscape:justify-start max-lg:landscape:pl-[3%] lg:justify-start lg:pl-[2.5%] text-[#151313]">
       <div className="flex items-center gap-[2.4cqw] max-lg:landscape:gap-[2cqh] lg:gap-[0.7vw]">
-        <Flashlight size={12} className="w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] text-[#151313]/70" />
-        <span className="rounded-full bg-[#151313]/[0.07] border border-[#151313]/15 px-[1.6cqw] py-[0.5cqw] max-lg:landscape:px-[1.3cqh] max-lg:landscape:py-[0.4cqh] lg:px-[0.45vw] lg:py-[0.14vw] text-[2.8cqw] max-lg:landscape:text-[2.3cqh] lg:text-[0.6vw] leading-none text-[#151313]">1x</span>
-        <span className="relative w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] rounded-full border-[0.24cqw] max-lg:landscape:border-[0.2cqh] lg:border-[0.05vw] border-[#151313]/70">
-          <span className="absolute inset-[0.45cqw] max-lg:landscape:inset-[0.4cqh] lg:inset-[0.11vw] rounded-full border-[0.24cqw] max-lg:landscape:border-[0.2cqh] lg:border-[0.05vw] border-[#151313]/70" />
+        <Flashlight size={12} className="w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] text-[#151313]/50" />
+        <span className="rounded-full bg-[#151313]/[0.07] border border-[#151313]/20 px-[1.6cqw] py-[0.5cqw] max-lg:landscape:px-[1.3cqh] max-lg:landscape:py-[0.4cqh] lg:px-[0.45vw] lg:py-[0.14vw] text-[2.8cqw] max-lg:landscape:text-[2.3cqh] lg:text-[0.6vw] leading-none text-[#151313]/60">1x</span>
+        <span className="relative w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] rounded-full border-[0.24cqw] max-lg:landscape:border-[0.2cqh] lg:border-[0.05vw] border-[#151313]/50">
+          <span className="absolute inset-[0.45cqw] max-lg:landscape:inset-[0.4cqh] lg:inset-[0.11vw] rounded-full border-[0.24cqw] max-lg:landscape:border-[0.2cqh] lg:border-[0.05vw] border-[#151313]/50" />
         </span>
-        <Timer size={12} className="w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] text-[#151313]/70" />
+        <Timer size={12} className="w-[3.6cqw] h-[3.6cqw] max-lg:landscape:w-[3.2cqh] max-lg:landscape:h-[3.2cqh] lg:w-[0.8vw] lg:h-[0.8vw] text-[#151313]/50" />
+        <span className="hidden lg:inline-block w-px h-[0.9vw] bg-[#151313]/15" />
+        <span className="hidden lg:inline-block text-[0.6vw] tracking-[0.3em] text-[#151313]/45">35MM</span>
       </div>
     </div>
 
     <div className="absolute inset-x-0 bottom-[17%] flex justify-center max-lg:landscape:inset-x-auto max-lg:landscape:bottom-auto max-lg:landscape:top-1/2 max-lg:landscape:-translate-y-1/2 max-lg:landscape:right-[13.5%] lg:inset-x-auto lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:right-[12.5%]">
-      <div className="flex items-center gap-[0.4cqw] rounded-full bg-white/75 shadow-[0_0.3cqw_0.9cqw_rgba(0,0,0,0.18)] p-[0.7cqw] max-lg:landscape:flex-col max-lg:landscape:gap-[0.5cqh] max-lg:landscape:p-[0.7cqh] lg:flex-col lg:gap-[0.2vw] lg:p-[0.26vw]">
+      <div className="flex flex-col items-center gap-[0.6cqw] max-lg:landscape:gap-[0.5cqh] lg:gap-[0.24vw]">
+        <span className="hidden max-lg:landscape:inline lg:inline text-[1.6cqw] max-lg:landscape:text-[1.3cqh] lg:text-[0.6vw] tracking-[0.3em] uppercase text-[#151313]/45">MODE</span>
+        <div className="flex items-center gap-[0.4cqw] rounded-full bg-white/75 border border-[#151313]/10 shadow-[0_0.3cqw_0.9cqw_rgba(0,0,0,0.18)] p-[0.7cqw] max-lg:landscape:flex-col max-lg:landscape:gap-[0.5cqh] max-lg:landscape:p-[0.7cqh] lg:flex-col lg:gap-[0.2vw] lg:p-[0.26vw]">
         <span className="rounded-full bg-[#151313] text-[#F5F0E8] px-[2.2cqw] py-[0.8cqw] max-lg:landscape:px-[1cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.5vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none">Photo</span>
-        <span className="px-[1.8cqw] py-[0.8cqw] max-lg:landscape:px-[0.5cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/60">Video</span>
-        <span className="hidden max-lg:landscape:inline lg:inline px-[1.8cqw] py-[0.8cqw] max-lg:landscape:px-[0.5cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/60">Portrait</span>
-        <span className="hidden lg:inline px-[1.8cqw] py-[0.8cqw] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/60">Pano</span>
+        <span className="px-[1.8cqw] py-[0.8cqw] max-lg:landscape:px-[0.5cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/50">Video</span>
+        <span className="hidden max-lg:landscape:inline lg:inline px-[1.8cqw] py-[0.8cqw] max-lg:landscape:px-[0.5cqh] max-lg:landscape:py-[1.2cqh] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] max-lg:landscape:text-[2.2cqh] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/50">Portrait</span>
+        <span className="hidden lg:inline px-[1.8cqw] py-[0.8cqw] lg:px-[0.3vw] lg:py-[0.5vw] text-[2.8cqw] lg:text-[0.6vw] tracking-[0.12em] leading-none text-[#151313]/50">Pano</span>
+        </div>
       </div>
     </div>
 
     <div className="absolute inset-x-0 bottom-0 h-[15%] flex items-center justify-between px-[2.5%] text-[#151313] max-lg:landscape:inset-x-auto max-lg:landscape:top-0 max-lg:landscape:right-0 max-lg:landscape:bottom-0 max-lg:landscape:left-auto max-lg:landscape:w-[12%] max-lg:landscape:h-auto max-lg:landscape:flex-col max-lg:landscape:items-center max-lg:landscape:justify-between max-lg:landscape:px-0 max-lg:landscape:pt-[3%] max-lg:landscape:pb-[3%] lg:inset-x-auto lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:w-[12%] lg:h-auto lg:flex-col lg:items-center lg:justify-between lg:px-0 lg:pt-[3%] lg:pb-[3%]">
-      <div className="relative w-[12cqw] max-lg:landscape:w-[12cqh] lg:w-[55%] aspect-[4/3] rounded-[0.8cqw] max-lg:landscape:rounded-[0.5cqh] lg:rounded-[0.3vw] overflow-hidden border border-[#151313]/25 shadow-md">
-        <img src="/images/gallery1.jpg" className="w-full h-full object-cover" />
+      <div className="relative w-[12cqw] max-lg:landscape:w-[12cqh] lg:w-[55%] aspect-[4/3] rounded-[0.8cqw] max-lg:landscape:rounded-[0.5cqh] lg:rounded-[0.3vw] overflow-hidden border border-[#151313]/20 shadow-md">
+        <img src="/images/contest-1st-namira-islam.jpg" className="w-full h-full object-cover" />
       </div>
 
       <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center max-lg:landscape:static max-lg:landscape:left-auto max-lg:landscape:translate-x-0 lg:static lg:left-auto lg:translate-x-0">
-        <div className="w-[18cqw] h-[18cqw] max-lg:landscape:w-[16cqh] max-lg:landscape:h-[16cqh] lg:w-[4.8vw] lg:h-[4.8vw] rounded-full border-[0.45cqw] max-lg:landscape:border-[0.4cqh] lg:border-[0.26vw] border-[#151313]/70 bg-[#F5F0E8]/50 flex items-center justify-center shadow-[0_0.5vw_1vw_rgba(0,0,0,0.25)]">
+        <div className="w-[18cqw] h-[18cqw] max-lg:landscape:w-[16cqh] max-lg:landscape:h-[16cqh] lg:w-[4.8vw] lg:h-[4.8vw] rounded-full border-[0.45cqw] max-lg:landscape:border-[0.4cqh] lg:border-[0.26vw] border-[#151313]/55 bg-[#F5F0E8]/50 flex items-center justify-center shadow-[0_0.5vw_1vw_rgba(0,0,0,0.25)]">
           <div className="w-[13cqw] h-[13cqw] max-lg:landscape:w-[11.5cqh] max-lg:landscape:h-[11.5cqh] lg:w-[3.5vw] lg:h-[3.5vw] rounded-full bg-white" />
         </div>
       </div>
 
       <div className="flex items-center justify-center w-[12cqw] max-lg:landscape:w-[12cqh] lg:w-[55%]">
-        <FlipHorizontal2 size={12} className="w-[4.4cqw] h-[4.4cqw] max-lg:landscape:w-[3.8cqh] max-lg:landscape:h-[3.8cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/70" />
+        <FlipHorizontal2 size={12} className="w-[4.4cqw] h-[4.4cqw] max-lg:landscape:w-[3.8cqh] max-lg:landscape:h-[3.8cqh] lg:w-[0.9vw] lg:h-[0.9vw] text-[#151313]/50" />
       </div>
     </div>
   </div>
@@ -241,14 +283,14 @@ const GlassReflection: React.FC = () => (
 // Static blurred backdrop for the hero stage. Deliberately has NO animation so the
 // browser can cache the full-screen blur instead of re-running it every frame.
 const BACKDROP_IMAGES = [
-  '/images/gallery1.jpg',
-  '/images/event1.jpg',
-  '/images/gallery2.jpg',
-  '/images/event2.jpg',
-  '/images/gallery3.jpg',
-  '/images/event3.jpg',
-  '/images/gallery4.jpg',
-  '/images/gallery1.jpg',
+  '/images/contest-1st-namira-islam.jpg',
+  '/images/contest-cat1-faisal-hossain.jpg',
+  '/images/contest-cat2-jannatul-shormi.jpg',
+  '/images/contest-2nd-tahmid-jashim.jpg',
+  '/images/contest-cat3-kayes-biplob.jpg',
+  '/images/contest-cat1-zarin-anjum.jpg',
+  '/images/contest-cat3-nazmul-nadim.jpg',
+  '/images/contest-cat1-mehedi-munna.jpg',
 ];
 
 const HeroBackdrop: React.FC = () => (

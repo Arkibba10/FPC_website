@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
 
 const seededRng = (seed: number) => {
   let a = seed;
@@ -84,9 +84,9 @@ const FloatingDust: React.FC = () => {
   return (
     <div aria-hidden className="fixed inset-0 overflow-hidden pointer-events-none select-none z-[45]">
       {particles.map((p) => (
-        <motion.div
+        <div
           key={p.id}
-          className="absolute"
+          className="dust-mote"
           style={{
             left: p.left + '%',
             top: p.start + 'vh',
@@ -98,22 +98,43 @@ const FloatingDust: React.FC = () => {
             boxShadow: p.isRing
               ? '0 0 0 0.5px rgba(42,42,42,0.2)'
               : '0 0 5px 1px rgba(200,169,106,0.4), 0 0 0 0.5px rgba(42,42,42,0.35)',
-          }}
-          animate={{
-            y: [0, `-${p.rise}vh`],
-            x: [0, p.drift, 0],
-            opacity: [0, p.peak, 0],
-            scale: [0.6, 1, 0.7],
-          }}
-          transition={{
-            duration: p.dur,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: 'linear',
-            times: [0, 0.4, 0.85],
+            animationDuration: p.dur + 's',
+            animationDelay: p.delay + 's',
+            ['--drift' as string]: p.drift + 'px',
+            ['--rise40' as string]: -(p.rise * 0.4) + 'vh',
+            ['--rise85' as string]: -(p.rise * 0.85) + 'vh',
+            ['--rise100' as string]: -p.rise + 'vh',
+            ['--peak' as string]: String(p.peak),
           }}
         />
       ))}
+      <style>{`
+        .dust-mote {
+          position: absolute;
+          will-change: transform, opacity;
+          animation: dustFloat linear infinite;
+        }
+        @keyframes dustFloat {
+          0% {
+            transform: translate3d(0, 0, 0) scale(0.6);
+            opacity: 0;
+          }
+          12% {
+            opacity: var(--peak);
+          }
+          40% {
+            transform: translate3d(var(--drift), var(--rise40), 0) scale(1);
+          }
+          85% {
+            transform: translate3d(var(--drift), var(--rise85), 0) scale(0.7);
+            opacity: 0;
+          }
+          100% {
+            transform: translate3d(0, var(--rise100), 0) scale(0.7);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };

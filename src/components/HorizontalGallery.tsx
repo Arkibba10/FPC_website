@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { GalleryItem } from '../types';
 import { Calendar, User, Download } from 'lucide-react';
@@ -8,17 +8,45 @@ interface HorizontalGalleryProps {
   gallery: GalleryItem[];
 }
 
+// Vertical scroll spent on each gallery card before the next one arrives.
+const SCROLL_PER_ITEM = 70;
+
 export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery }) => {
   const targetRef = useRef<HTMLDivElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const travelRef = useRef(0);
+
+  // Cache the total horizontal travel in a ref instead of reading layout inside
+  // the scroll transform. Reading strip.scrollWidth on every scroll frame while
+  // this section is pinned forces a synchronous layout — the main jank source
+  // in this section. Measuring once (plus on resize/item-count change) keeps the
+  // end-of-strip alignment exact without the per-frame reflow.
+  useEffect(() => {
+    const measure = () => {
+      const strip = stripRef.current;
+      travelRef.current = strip ? Math.max(0, strip.scrollWidth - window.innerWidth) : 0;
+    };
+    measure();
+    const t = setTimeout(measure, 250);
+    window.addEventListener('resize', measure);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('resize', measure);
+    };
+  }, [gallery.length]);
 
   // Track scroll progress of the container
   const { scrollYProgress } = useScroll({
     target: targetRef,
   });
 
-  // Map scroll progress to horizontal translation
+  // Total horizontal travel = strip width minus the viewport, so the scroll
+  // ends exactly when the last card is fully in view (no overshoot/whitespace).
   const totalItems = gallery.length;
-  const x = useTransform(scrollYProgress, [0, 1], ['0%', `-${(totalItems - 1) * 85}%`]);
+  const x = useTransform(scrollYProgress, (p) => -p * travelRef.current);
+
+  // Scale the section height with the item count so the pace stays steady.
+  const sectionHeight = `calc(${100 + (totalItems - 1) * SCROLL_PER_ITEM}vh)`;
 
   // Film running effect: sprocket holes crawl with scroll
   const sprocketX = useTransform(scrollYProgress, [0, 1], ['0px', '-120px']);
@@ -28,7 +56,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
   const reelY2 = useTransform(scrollYProgress, [0, 1], [-40, 160]);
 
   return (
-    <section ref={targetRef} className="relative h-[300vh] bg-beige">
+    <section ref={targetRef} className="relative bg-beige" style={{ height: sectionHeight }}>
       {/* Sticky container that stays in viewport */}
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden py-12 relative z-10">
 
@@ -60,7 +88,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
 
         {/* Horizontal Moving Content */}
         <div className="relative flex-1 flex items-center">
-          <motion.div style={{ x }} className="flex flex-col w-max will-change-transform">
+          <motion.div ref={stripRef} style={{ x }} className="flex flex-col w-max will-change-transform">
             {/* Top film band with sprocket holes */}
             <div className="relative h-7 md:h-10 bg-[#151515] border-2 border-b-0 border-[#2A2A2A] rounded-t-2xl overflow-hidden">
               <motion.div style={{ x: sprocketX }} className="film-holes absolute inset-y-0 left-0 w-[300%] will-change-transform" />
@@ -93,7 +121,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
                         download={`${item.title.replace(/\s+/g, '_')}.jpg`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-11 h-11 rounded-full bg-black/60 hover:bg-burgundy text-white hover:text-gold border border-white/10 hover:border-gold/30 flex items-center justify-center transition-all duration-300 shadow-lg hover:scale-110 cursor-pointer"
+                        className="w-11 h-11 rounded-full bg-black/60 hover:bg-burgundy text-white hover:text-gold border border-white/10 hover:border-gold/30 flex items-center justify-center transition-[transform,background-color,color,border-color] duration-300 shadow-lg hover:scale-110 cursor-pointer"
                         title="Download High-Res"
                       >
                         <Download size={16} />
@@ -133,7 +161,7 @@ export const HorizontalGallery: React.FC<HorizontalGalleryProps> = ({ gallery })
                     </div>
 
                     {/* Decorative Frame Border */}
-                    <div className="absolute inset-4 border border-white/0 group-hover:border-white/10 rounded-2xl pointer-events-none transition-all duration-700"></div>
+                    <div className="absolute inset-4 border border-white/0 group-hover:border-white/10 rounded-2xl pointer-events-none transition-colors duration-700"></div>
                   </div>
                 );
               })}

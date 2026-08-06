@@ -53,14 +53,14 @@ export const AlumniCarousels: React.FC<{ alumni: Alumni[] }> = ({ alumni }) => {
             {duplicatedAlumni.map((item, idx) => (
               <div
                 key={`alumni-l-${item.id}-${idx}`}
-                className="w-[200px] md:w-[240px] aspect-[10/16] bg-charcoal-dark border border-white/5 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-500 hover:border-gold/30 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1.5 group"
+                className="w-[200px] md:w-[240px] aspect-[10/16] bg-charcoal-dark border border-white/5 rounded-2xl overflow-hidden flex flex-col justify-between transition-[border-color,box-shadow,transform] duration-500 hover:border-gold/30 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1.5 group"
               >
                 {/* Photo taking most of the space (82%!) */}
                 <div className="relative h-[82%] w-full overflow-hidden bg-black">
                   <img
                     src={item.photo}
                     alt={item.name}
-                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out"
+                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-[filter,transform] duration-1000 ease-out"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
@@ -100,14 +100,14 @@ export const AlumniCarousels: React.FC<{ alumni: Alumni[] }> = ({ alumni }) => {
             {duplicatedAlumni.map((item, idx) => (
               <div
                 key={`alumni-r-${item.id}-${idx}`}
-                className="w-[200px] md:w-[240px] aspect-[10/16] bg-charcoal-dark border border-white/5 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-500 hover:border-gold/30 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1.5 group"
+                className="w-[200px] md:w-[240px] aspect-[10/16] bg-charcoal-dark border border-white/5 rounded-2xl overflow-hidden flex flex-col justify-between transition-[border-color,box-shadow,transform] duration-500 hover:border-gold/30 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1.5 group"
               >
                 {/* Photo taking most of the space (82%!) */}
                 <div className="relative h-[82%] w-full overflow-hidden bg-black">
                   <img
                     src={item.photo}
                     alt={item.name}
-                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out"
+                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-[filter,transform] duration-1000 ease-out"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>

@@ -56,6 +56,7 @@ export interface UpdatePost {
   content: string;
   link?: string;
   order: number;
+  status?: 'upcoming' | 'published';
 }
 
 export interface ConvenerInfo {

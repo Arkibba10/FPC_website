@@ -158,22 +158,25 @@ export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) =
   };
 
   const navBtnClass =
-    'z-40 flex h-11 w-11 items-center justify-center rounded-full border border-burgundy/40 text-burgundy transition-all duration-300 hover:bg-burgundy hover:text-gold hover:shadow-[0_10px_26px_-10px_rgba(110,30,42,0.7)] active:scale-90';
+    'z-40 flex h-11 w-11 items-center justify-center rounded-full border border-burgundy/40 text-burgundy transition-[transform,background-color,color,box-shadow] duration-300 hover:bg-burgundy hover:text-gold hover:shadow-[0_10px_26px_-10px_rgba(110,30,42,0.7)] active:scale-90';
 
   /* Reduced motion: plain static grid. */
   if (reduced) {
     return (
-      <section className="relative overflow-hidden bg-white" aria-label="Executive Members">
+      <section className="relative overflow-hidden bg-white" aria-label="Committee of Spring '26">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-white" />
           <div className="bg-paperish absolute inset-0" />
           <div className="absolute inset-0 bg-[radial-gradient(110%_80%_at_18%_-10%,rgba(110,30,42,0.05),transparent_55%)]" />
         </div>
         <div className="relative z-10 mx-auto max-w-6xl px-6 pb-24 pt-16 md:pt-24">
-          <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-charcoal/45">FPC · CSE-UAP — Executive Board</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-charcoal/45">FPC · CSE-UAP — Committee of Spring '26</p>
           <h2 className="mt-4 text-4xl font-playfair font-bold text-charcoal leading-tight md:text-5xl lg:text-6xl">
-            Executive Members
+            Committee of <span className="italic text-burgundy">Spring '26</span>
           </h2>
+          <p className="mt-4 max-w-2xl font-sans text-base italic leading-relaxed text-charcoal/60 md:text-lg">
+            Creative individuals who make beautiful events come alive.
+          </p>
           <div className="mt-10 h-px w-24 bg-burgundy/40" />
           <div className="mt-14 columns-1 gap-6 sm:columns-2 xl:columns-3">
             {sorted.map((member) => (
@@ -192,7 +195,7 @@ export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) =
   }
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-white" aria-label="Executive Members">
+    <section ref={sectionRef} className="relative overflow-hidden bg-white" aria-label="Committee of Spring '26">
       {/* Layered background */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-white" />
@@ -210,15 +213,16 @@ export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) =
 
       {/* Editorial heading */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 pt-16 md:pt-24">
-        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-charcoal/45">FPC · CSE-UAP — Executive Board</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-charcoal/45">FPC · CSE-UAP — Committee of Spring '26</p>
         <h2 className="mt-4 text-4xl font-playfair font-bold text-charcoal leading-tight md:text-5xl lg:text-6xl">
-          Executive Members
+          Committee of <span className="italic text-burgundy">Spring '26</span>
         </h2>
+        <p className="mt-4 max-w-2xl font-sans text-base italic leading-relaxed text-charcoal/60 md:text-lg">
+          Creative individuals who make beautiful events come alive.
+        </p>
         <div className="mt-10 h-px w-24 bg-burgundy/40" />
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 font-mono text-[9.5px] uppercase tracking-[0.3em] text-charcoal/45">
-          <span className="hidden sm:inline">Auto-playing circular gallery — hover to pause · drag or use the arrows to browse</span>
-          <span className="sm:hidden">Circular gallery — use the arrows to browse</span>
+        <div className="mt-8 flex flex-wrap items-center justify-end gap-3 font-mono text-[9.5px] uppercase tracking-[0.3em] text-charcoal/45">
           <span className="tabular-nums">
             {String(index + 1).padStart(2, '0')} — {String(n).padStart(2, '0')}
           </span>
@@ -243,7 +247,10 @@ export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) =
             transition={{ duration: 1.1, delay: 0.6, ease: EASE }}
             className="relative w-full blur-[2px]"
           />
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 1.1, delay: 0.6, ease: EASE }}
             className="absolute inset-0 bg-gradient-to-t from-[#6E1E2A]/70 via-transparent to-transparent"
             style={{
               WebkitMaskImage: 'url(/images/camcorder.png)',
@@ -267,7 +274,10 @@ export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) =
             transition={{ duration: 1.1, delay: 0.75, ease: EASE }}
             className="relative w-full blur-[2px]"
           />
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 1.1, delay: 0.75, ease: EASE }}
             className="absolute inset-0 bg-gradient-to-t from-[#6E1E2A]/70 via-transparent to-transparent"
             style={{
               WebkitMaskImage: 'url(/images/camera.png)',

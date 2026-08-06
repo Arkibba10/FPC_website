@@ -173,17 +173,6 @@ const AppContent: React.FC = () => {
           </AnimatePresence>
         </div>
       )}
-
-      {/* CSS Fade-in animation */}
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fade-in {
-          animation: fadeIn 1s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };

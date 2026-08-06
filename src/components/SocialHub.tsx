@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useClub } from '../context/useClub';
-import { Instagram, Youtube, ArrowRight, Heart, MessageCircle, Send } from 'lucide-react';
+import { Instagram, Youtube, ArrowRight, Heart, MessageCircle, Send, Check } from 'lucide-react';
 
 export const SocialHub: React.FC = () => {
   const { settings } = useClub();
@@ -61,7 +61,7 @@ export const SocialHub: React.FC = () => {
                   href={settings?.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-full border border-burgundy/20 hover:bg-burgundy hover:text-gold hover:border-burgundy text-xs font-mono uppercase tracking-wider font-bold transition-all"
+                  className="px-4 py-2 rounded-full border border-burgundy/20 hover:bg-burgundy hover:text-gold hover:border-burgundy text-xs font-mono uppercase tracking-wider font-bold transition-colors"
                 >
                   Follow
                 </a>
@@ -101,9 +101,9 @@ export const SocialHub: React.FC = () => {
               href={settings?.youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/50 border border-charcoal/5 rounded-3xl p-6 flex items-center gap-5 shadow-sm hover:border-gold/50 hover:shadow-md transition-all group backdrop-blur-sm"
+              className="bg-white/50 border border-charcoal/5 rounded-3xl p-6 flex items-center gap-5 shadow-sm hover:border-gold/50 hover:shadow-md transition-[border-color,box-shadow] group backdrop-blur-sm"
             >
-              <div className="p-4 rounded-2xl bg-burgundy/10 text-burgundy group-hover:bg-burgundy group-hover:text-gold transition-all duration-300">
+              <div className="p-4 rounded-2xl bg-burgundy/10 text-burgundy group-hover:bg-burgundy group-hover:text-gold transition-colors duration-300">
                 <Youtube size={24} />
               </div>
               <div>
@@ -145,7 +145,7 @@ export const SocialHub: React.FC = () => {
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 p-2 rounded-lg bg-burgundy text-gold border border-gold/20 hover:bg-burgundy-light hover:scale-105 transition-all cursor-pointer"
+                  className="absolute right-2 p-2 rounded-lg bg-burgundy text-gold border border-gold/20 hover:bg-burgundy-light hover:scale-105 transition-[transform,background-color] cursor-pointer"
                 >
                   {subscribed ? <Check size={14} className="text-gold" /> : <Send size={14} />}
                 </button>
@@ -166,10 +166,3 @@ export const SocialHub: React.FC = () => {
     </section>
   );
 };
-
-// Simple inline check icon helper if not imported
-const Check = ({ size, className }: { size: number, className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
-);

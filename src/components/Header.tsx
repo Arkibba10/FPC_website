@@ -42,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({ onAdminClick, isAdminView, onHom
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-charcoal-dark/90 backdrop-blur-md border-b border-white/5 py-4 shadow-lg transition-all duration-500">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-charcoal-dark/95 border-b border-white/5 py-4 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Brand Logo */}
         <div

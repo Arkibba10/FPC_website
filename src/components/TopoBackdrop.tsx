@@ -42,9 +42,9 @@ export const TopoBackdrop: React.FC = () => {
       className="pointer-events-none fixed inset-0 z-[5] select-none overflow-hidden"
     >
       {/* Burgundy contours — visible on light sections (beige/white) */}
-      <TopographicBackground ref={layerA} color="#6B1126" intensity={0.9} />
+      <TopographicBackground ref={layerA} color="#6B1126" intensity={0.5} />
       {/* Gold contours — visible on dark sections (charcoal) */}
-      <TopographicBackground ref={layerB} color="#C8A96A" intensity={1.35} />
+      <TopographicBackground ref={layerB} color="#C8A96A" intensity={0.75} />
     </div>
   );
 };

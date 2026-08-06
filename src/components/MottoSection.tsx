@@ -5,6 +5,42 @@ import { useClub } from '../context/useClub';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+// Phrases inside the manifesto that get highlighted in maroon.
+const HIGHLIGHTS = [
+  'Film & Photography Club, CSE-UAP',
+  'Department of Computer Science & Engineering',
+  'University of Asia Pacific',
+];
+
+const renderMotto = (text: string): React.ReactNode[] => {
+  const parts: React.ReactNode[] = [];
+  let rest = text;
+  let key = 0;
+  while (rest.length > 0) {
+    let bestIndex = -1;
+    let bestPhrase = '';
+    for (const phrase of HIGHLIGHTS) {
+      const idx = rest.indexOf(phrase);
+      if (idx !== -1 && (bestIndex === -1 || idx < bestIndex)) {
+        bestIndex = idx;
+        bestPhrase = phrase;
+      }
+    }
+    if (bestIndex === -1) {
+      parts.push(rest);
+      break;
+    }
+    if (bestIndex > 0) parts.push(rest.slice(0, bestIndex));
+    parts.push(
+      <span key={key++} className="text-burgundy">
+        {bestPhrase}
+      </span>
+    );
+    rest = rest.slice(bestIndex + bestPhrase.length);
+  }
+  return parts;
+};
+
 // Deterministic barcode bars (widths in px). Static, no randomness.
 const BARCODE = [2, 1, 3, 1, 1, 2, 4, 1, 2, 1, 1, 3, 2, 1, 1, 2, 3, 1, 1, 2, 1, 4, 1, 2, 1, 3, 2, 1, 1, 2, 4, 1, 2, 1, 1, 3, 1, 2, 1, 1, 2];
 
@@ -16,7 +52,7 @@ export const MottoSection: React.FC = () => {
   const { settings } = useClub();
   const mottoText =
     settings?.motto ||
-    'The Film & Photography Club, CSE-UAP is a creative community of students from the Department of Computer Science & Engineering at the University of Asia Pacific, dedicated to capturing stories, fostering visual creativity, and inspiring innovation through photography, filmmaking, and digital media.';
+    'The Film & Photography Club, CSE-UAP is a creative community of students from the Department of Computer Science & Engineering at the University of Asia Pacific, dedicated to capturing stories, fostering visual creativity, and inspiring innovation through photography, filmmaking, and digital media. We provide a collaborative platform where aspiring photographers, filmmakers, designers, and storytellers can develop their skills, exchange ideas, and transform creative visions into meaningful visual experiences.';
 
   return (
     <section className="relative min-h-screen bg-[#181818] flex items-center justify-center overflow-hidden py-14 md:py-20 px-4 sm:px-6 md:px-5 lg:px-6">
@@ -109,15 +145,19 @@ export const MottoSection: React.FC = () => {
                   <span className="w-12 h-px bg-charcoal/30" />
                 </motion.div>
 
-                <motion.p
+                <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
-                  className="mt-8 font-playfair italic text-base sm:text-lg md:text-2xl leading-relaxed text-charcoal/80 max-w-2xl"
+                  className="mt-8 w-full max-w-2xl space-y-5 text-left"
                 >
-                  {mottoText}
-                </motion.p>
+                  {mottoText.split('\n\n').map((para, i) => (
+                    <p key={i} className="font-sans font-normal text-[17px] leading-[1.8] text-charcoal">
+                      {renderMotto(para)}
+                    </p>
+                  ))}
+                </motion.div>
 
                 {/* Ticket meta row */}
                 <motion.div

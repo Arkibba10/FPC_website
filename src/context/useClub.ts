@@ -48,7 +48,7 @@ export interface ClubContextType {
   updateSettings: (settings: Partial<WebsiteSettings>) => void;
   
   // Auth Operations
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
