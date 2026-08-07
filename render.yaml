@@ -4,6 +4,7 @@ services:
     runtime: python
     plan: free
     autoDeploy: true
+    rootDir: backend
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
     startCommand: python manage.py migrate --noinput && python manage.py seed && gunicorn fpc.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 4
     healthCheckPath: /api/members/
