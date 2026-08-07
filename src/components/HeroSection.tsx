@@ -127,12 +127,17 @@ const LandingContent: React.FC = () => {
     <PolaroidCarousel />
 
     {DUST.map((d, i) => (
-      <motion.div
+      <span
         key={i}
-        className="absolute rounded-full bg-[#151313]/35 z-20"
-        style={{ left: d.x + '%', top: d.y + '%', width: d.s * 0.16 + 'vw', height: d.s * 0.16 + 'vw' }}
-        animate={dustInView ? { y: [0, -14, 0], opacity: [0.2, 0.8, 0.2] } : { opacity: 0.5 }}
-        transition={{ repeat: Infinity, duration: d.dur, delay: d.d, ease: 'easeInOut' }}
+        className={`hero-dust absolute rounded-full bg-[#151313]/35 z-20 ${dustInView ? '' : 'hero-dust-paused'}`}
+        style={{
+          left: d.x + '%',
+          top: d.y + '%',
+          width: d.s * 0.16 + 'vw',
+          height: d.s * 0.16 + 'vw',
+          animationDuration: d.dur + 's',
+          animationDelay: d.d + 's',
+        }}
       />
     ))}
 
@@ -223,6 +228,22 @@ const LandingContent: React.FC = () => {
         <span className="whitespace-nowrap tabular-nums">Spring '26 — Vol. 01</span>
       </motion.div>
     </div>
+    <style>{`
+      @keyframes heroDust {
+        0%, 100% { transform: translateY(0); opacity: 0.2; }
+        50% { transform: translateY(-14px); opacity: 0.8; }
+      }
+      .hero-dust {
+        will-change: transform, opacity;
+        animation: heroDust ease-in-out infinite;
+      }
+      .hero-dust-paused {
+        animation-play-state: paused;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hero-dust { animation: none; }
+      }
+    `}</style>
   </div>
   );
 };
@@ -307,18 +328,18 @@ const HeroBackdrop: React.FC = () => (
 
 export const HeroSection: React.FC = () => {
   return (
-    <section className="relative w-full min-h-screen bg-[#F5F0E8] overflow-hidden pt-[84px] md:pt-[96px]">
+    <section className="relative w-full min-h-dvh bg-[#F5F0E8] overflow-hidden pt-[84px] md:pt-[96px]">
       <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none blur-[5px] brightness-[0.55] saturate-[0.8] scale-[1.03] [container-type:size]">
         <HeroBackdrop />
       </div>
       <div className="absolute inset-0 z-[1] pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(21,19,19,0.6)_100%)]" />
 
 
-      <div className="relative z-20 flex flex-1 items-center justify-center w-full min-h-[calc(100vh-84px)] md:min-h-[calc(100vh-96px)] pb-[3vh]">
+      <div className="relative z-20 flex flex-1 items-center justify-center w-full min-h-[calc(100dvh-84px)] md:min-h-[calc(100dvh-96px)] pb-[3dvh]">
         <motion.div
-          initial={{ opacity: 0, y: 60, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.15, ease: EASE }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.15, ease: EASE }}
           className="relative h-[calc(100dvh-100px)] w-auto aspect-[9/19.5] max-lg:landscape:h-[calc(100dvh-92px)] max-lg:landscape:max-w-[94vw] max-lg:landscape:aspect-[16/9.4] lg:h-auto lg:w-[84vw] lg:aspect-[16/9.4]"
         >
           <div className="absolute inset-0 rounded-[16%/8%] max-lg:landscape:rounded-[3.8%/7.4%] lg:rounded-[3.8%/7.4%] bg-gradient-to-br from-[#3d3d3d] via-[#171717] to-[#343434] p-[1.05%] shadow-[0_40px_80px_-12px_rgba(0,0,0,0.65),0_120px_220px_-40px_rgba(0,0,0,0.55)]">

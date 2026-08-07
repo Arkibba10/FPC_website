@@ -141,13 +141,21 @@ export const SpotlightMembers: React.FC<SpotlightMembersProps> = ({ members }) =
   const stageRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const isVisible = useInView(sectionRef, { once: false, amount: 0.15 });
 
-  /* Constant auto-advancing circular loop — paused while the stage is hovered. */
+  /* Always start from the president (index 0) whenever the section scrolls into view. */
+  const [prevVisible, setPrevVisible] = useState(isVisible);
+  if (isVisible !== prevVisible) {
+    setPrevVisible(isVisible);
+    if (isVisible) setIndex(0);
+  }
+
+  /* Constant auto-advancing circular loop — only while visible and not hovered. */
   useEffect(() => {
-    if (reduced || paused || n === 0) return;
+    if (reduced || paused || !isVisible || n === 0) return;
     const id = window.setInterval(() => setIndex((i) => (i + 1) % n), 4200);
     return () => window.clearInterval(id);
-  }, [reduced, paused, n]);
+  }, [reduced, paused, n, isVisible]);
 
   const goPrev = () => setIndex((i) => (i - 1 + n) % n);
   const goNext = () => setIndex((i) => (i + 1) % n);

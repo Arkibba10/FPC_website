@@ -20,6 +20,12 @@ uploads
 # Local debug screenshots
 visuals
 
+# Local env files
+.env
+.env.local
+.env.*.local
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

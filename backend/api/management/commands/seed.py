@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
@@ -159,14 +161,14 @@ class Command(BaseCommand):
         )
 
         admin, created_a = User.objects.get_or_create(username='admin')
-        admin.set_password('Fpc@admin2026')
+        admin.set_password(os.environ.get('ADMIN_PASSWORD', 'Fpc@admin2026'))
         admin.is_staff = True
         admin.is_superuser = True
         admin.save()
         Profile.objects.update_or_create(user=admin, defaults={'role': 'admin'})
 
         editor, created_e = User.objects.get_or_create(username='editor')
-        editor.set_password('Fpc@editor2026')
+        editor.set_password(os.environ.get('EDITOR_PASSWORD', 'Fpc@editor2026'))
         editor.save()
         Profile.objects.update_or_create(user=editor, defaults={'role': 'editor'})
 

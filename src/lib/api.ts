@@ -1,5 +1,11 @@
 const TOKEN_KEY = 'fpc_token';
 
+// Deployed backend origin (e.g. https://fpc-backend.onrender.com). When unset,
+// the app calls the same origin and relies on the Vite dev proxy for /api.
+const API_BASE = (import.meta.env.VITE_API_URL as string | undefined ?? '').replace(/\/+$/, '');
+
+export const getApiUrl = (path: string): string => `${API_BASE}/api${path}`;
+
 export const getToken = (): string | null => localStorage.getItem(TOKEN_KEY);
 
 export const setToken = (token: string): void => {
@@ -30,7 +36,7 @@ const request = async <T>(path: string, options: RequestInit = {}): Promise<T> =
 
   let response: Response;
   try {
-    response = await fetch(`/api${path}`, { ...options, headers });
+    response = await fetch(getApiUrl(path), { ...options, headers });
   } catch {
     throw new ApiError('Network error: backend unreachable.', 0);
   }
